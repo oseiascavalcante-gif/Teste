@@ -18,7 +18,6 @@
     <main>
         <h2>Dar Visão</h2>
 
-        <!-- Barra de progresso visual do tempo de confirmação automática -->
         <div id="wrapper-barra-tempo" class="wrapper-barra-tempo">
             <div id="barra-tempo" class="barra-tempo"></div>
         </div>
@@ -27,20 +26,18 @@
             <article>
                 <div class="container-opcoes">
                     
-                    <!-- Opção 1 -->
                     <div id="opcao-0" class="bloco-opcao">
                         <img
-                            src="https://cloudfront-us-east-1.images.arcpublishing.com/estadao/QDNK2LEF4NI5HOKE2JLFTVOGSM.jpg"
+                            src="https://arcpublishing.com"
                             alt="Símbolo de acessibilidade"
                             class="img-simbolo acessibilidade"
                         >
                         <p>Veja como a acessibilidade é!</p>
                     </div>
 
-                    <!-- Opção 2 -->
                     <div id="opcao-1" class="bloco-opcao">
                         <img
-                            src="https://cloudfront-us-east-1.images.arcpublishing.com/estadao/QDNK2LEF4NI5HOKE2JLFTVOGSM.jpg"
+                            src="https://arcpublishing.com"
                             alt="Símbolo de acessibilidade"
                             class="img-simbolo acessibilidade"
                         >
@@ -56,6 +53,77 @@
         <p>Projeto feito por Oséias</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        let indiceFocado = -1;
+        let temporizadorConfirmacao = null;
+        let intervaloProgresso = null;
+        let selecaoBloqueada = false;
+
+        const TEMPO_ESPERA_MS = 3000; 
+        const TOTAL_OPCOES = 2;       
+
+        const barraTempo = document.getElementById('barra-tempo');
+        const wrapperBarra = document.getElementById('wrapper-barra-tempo');
+
+        function registrarCliqueGlobal(event) {
+            if (selecaoBloqueada) return;
+
+            limparCronometros();
+
+            indiceFocado++;
+            if (indiceFocado >= TOTAL_OPCOES) {
+                indiceFocado = 0;
+            }
+
+            for (let i = 0; i < TOTAL_OPCOES; i++) {
+                const elemento = document.getElementById(`opcao-${i}`);
+                if (i === indiceFocado) {
+                    elemento.classList.add('foco-varredura');
+                } else {
+                    elemento.classList.remove('foco-varredura');
+                }
+            }
+
+            dispararContagemRegressiva();
+        }
+
+        function dispararContagemRegressiva() {
+            wrapperBarra.style.display = 'block';
+            barraTempo.style.width = '0%';
+            
+            let tempoDecorrido = 0;
+            const intervaloAtualizacao = 50; 
+
+            intervaloProgresso = setInterval(() => {
+                tempoDecorrido += intervaloAtualizacao;
+                const porcentagem = (tempoDecorrido / TEMPO_ESPERA_MS) * 100;
+                barraTempo.style.width = `${porcentagem}%`;
+                
+                if (tempoDecorrido >= TEMPO_ESPERA_MS) {
+                    clearInterval(intervaloProgresso);
+                }
+            }, intervaloAtualizacao);
+
+            temporizadorConfirmacao = setTimeout(() => {
+                finalizarSelecao();
+            }, TEMPO_ESPERA_MS);
+        }
+
+        function limparCronometros() {
+            if (temporizadorConfirmacao) clearTimeout(temporizadorConfirmacao);
+            if (intervaloProgresso) clearInterval(intervaloProgresso);
+        }
+
+        function finalizarSelecao() {
+            selecaoBloqueada = true;
+            wrapperBarra.style.display = 'none';
+
+            const elementoSelecionado = document.getElementById(`opcao-${indiceFocado}`);
+            if (elementoSelecionado) {
+                elementoSelecionado.classList.remove('foco-varredura');
+                elementoSelecionado.classList.add('confirmado');
+            }
+        }
+    </script>
 </body>
 </html>
