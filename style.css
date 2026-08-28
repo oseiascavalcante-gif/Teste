@@ -1,4 +1,3 @@
-/* Mantendo a base original e adicionando os estados de varredura ativa */
 body {
     margin: 0;
     padding: 0;
@@ -57,20 +56,17 @@ p {
     margin: 0;
 }
 
-/* Estado 1: Destacado durante a varredura por cliques */
 .bloco-opcao.foco-varredura {
     border-color: #0066cc;
     background-color: #e6f2ff;
     transform: scale(1.01);
 }
 
-/* Estado 2: Selecionado e travado pelo temporizador */
 .bloco-opcao.confirmado {
     border-color: #2b8a3e;
     background-color: #ebfbee;
 }
 
-/* Indicador visual de carregamento do tempo de espera */
 .wrapper-barra-tempo {
     width: 100%;
     height: 8px;
@@ -93,4 +89,3 @@ footer {
     margin-top: 40px;
     border-top: 1px solid #eeeeee;
 }
-
