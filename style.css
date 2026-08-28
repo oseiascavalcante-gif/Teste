@@ -1,1 +1,96 @@
+/* Mantendo a base original e adicionando os estados de varredura ativa */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+header {
+    padding: 20px;
+    background: #f5f5f5;
+    text-align: center;
+}
+
+nav a {
+    text-decoration: none;
+    color: #0066cc;
+}
+
+main {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h2 {
+    text-align: center;
+}
+
+.container-opcoes {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.bloco-opcao {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 30px;
+    border: 4px solid #cccccc;
+    border-radius: 12px;
+    background: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.img-simbolo {
+    width: 150px;
+    height: auto;
+}
+
+p {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+/* Estado 1: Destacado durante a varredura por cliques */
+.bloco-opcao.foco-varredura {
+    border-color: #0066cc;
+    background-color: #e6f2ff;
+    transform: scale(1.01);
+}
+
+/* Estado 2: Selecionado e travado pelo temporizador */
+.bloco-opcao.confirmado {
+    border-color: #2b8a3e;
+    background-color: #ebfbee;
+}
+
+/* Indicador visual de carregamento do tempo de espera */
+.wrapper-barra-tempo {
+    width: 100%;
+    height: 8px;
+    background: #eeeeee;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    overflow: hidden;
+    display: none;
+}
+
+.barra-tempo {
+    height: 100%;
+    width: 0%;
+    background: #0066cc;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    border-top: 1px solid #eeeeee;
+}
 
