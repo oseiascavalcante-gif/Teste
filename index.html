@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acessibilidade Ocular - Questionário com Voz</title>
+    <title>Acessibilidade Ocular - Questionário Instrutivo</title>
     <style>
-        /* RESET & ACESSIBILIDADE DE CORES (Contraste em Tons de Azul) */
+        /* RESET & ACESSIBILIDADE DE CORES */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -15,16 +15,16 @@
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             text-align: center;
-            background-color: #0b131a; /* Fundo azul escuro profundo para reduzir fadiga visual */
-            color: #FFFFFF; /* Texto branco puro para leitura limpa */
+            background-color: #0b131a; 
+            color: #FFFFFF; 
             user-select: none;
-            font-size: 24px; /* Fonte ampliada para baixa visão */
+            font-size: 24px; 
             line-height: 1.6;
         }
 
         header, footer {
             background-color: #111d28;
-            color: #00d2ff; /* Azul ciano vibrante para máximo contraste e destaque */
+            color: #00d2ff; 
             padding: 2rem 1rem;
             border-bottom: 4px solid #00d2ff;
         }
@@ -41,10 +41,9 @@
             text-decoration: underline;
         }
 
-        /* ÁREA PRINCIPAL EXPANDIDA */
         main {
             padding: 1.5rem;
-            max-width: 90vw; /* Ocupa quase toda a largura da tela */
+            max-width: 90vw; 
             margin: auto;
             min-height: 70vh;
             display: flex;
@@ -58,7 +57,7 @@
             margin-bottom: 1.5rem;
         }
 
-        /* CAIXA DE INSTRUÇÕES COM TEMA AZUL */
+        /* CAIXA DE INSTRUÇÕES */
         .instrucoes {
             background-color: #111d28;
             padding: 25px;
@@ -69,12 +68,13 @@
         }
 
         .instrucoes p {
-            font-size: 1.6rem;
-            margin-bottom: 10px;
+            font-size: 1.7rem;
+            margin-bottom: 12px;
         }
 
         .instrucoes strong {
             color: #00d2ff;
+            font-size: 1.9rem;
         }
 
         /* CARD DE CLIQUE GIGANTE */
@@ -82,29 +82,23 @@
             background: #162535;
             padding: 40px 20px;
             border-radius: 16px;
-            border: 5px solid #3498db; /* Borda azul perceptível */
+            border: 5px solid #3498db; 
             box-shadow: 0 0 25px rgba(0, 210, 255, 0.2);
             cursor: pointer;
             transition: background 0.2s, border-color 0.2s, transform 0.1s;
             width: 100%;
-            min-height: 400px; /* Alvo imenso para cliques fáceis */
+            min-height: 400px; 
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
 
-        /* Feedback visual ao passar o mouse */
         .pergunta-card:hover {
             background: #1c3045;
             border-color: #00d2ff;
         }
 
-        .pergunta-card:active {
-            transform: scale(0.99);
-        }
-
-        /* ÍCONE DE ACESSIBILIDADE OTIMIZADO */
         .img-simbolo {
             width: 100%;
             max-width: 250px;
@@ -114,7 +108,7 @@
         }
 
         #texto-pergunta {
-            font-size: 2.2rem; /* Fonte gigante para a pergunta */
+            font-size: 2.2rem; 
             font-weight: 800;
             color: #FFFFFF;
             padding: 0 10px;
@@ -128,7 +122,7 @@
             background: #111d28;
             padding: 30px;
             border-radius: 12px;
-            border: 4px solid #00ff88; /* Borda verde brilhante para o fim */
+            border: 4px solid #00ff88; 
         }
 
         .respostas-log h3 {
@@ -152,7 +146,6 @@
         footer {
             margin-top: 40px;
             border-top: 4px solid #00d2ff;
-            border-bottom: none;
         }
     </style>
 </head>
@@ -169,20 +162,19 @@
         <h2>Questionário Interativo</h2>
         
         <div class="instrucoes">
-            <p><strong>Como responder dentro da área central:</strong></p>
-            <p>Clique <strong>ESQUERDO</strong> = NÃO</p>
-            <p>Clique <strong>DIREITO</strong> =  SIM</p>
+            <p><strong>Instruções de navegação:</strong></p>
+            <p>🔵 Clique <strong>ESQUERDO</strong> em qualquer lugar central para responder: <strong>NÃO</strong></p>
+            <p>🔵 Clique <strong>DIREITO</strong> em qualquer lugar central para responder: <strong>SIM</strong></p>
         </div>
 
         <section>
-            <!-- Área de clique acessível -->
             <article class="pergunta-card" id="area-clique" aria-label="Área de clique para resposta">
                 <img 
-                    src="https://cloudfront-us-east-1.images.arcpublishing.com/estadao/QDNK2LEF4NI5HOKE2JLFTVOGSM.jpg" 
+                    src="image_Qtzjut.png" 
                     alt="Símbolo azul e preto de Acessibilidade Ocular" 
                     class="img-simbolo"
                 >
-                <p id="texto-pergunta">Carregando pergunta...</p>
+                <p id="texto-pergunta">Carregando questionário...</p>
             </article>
         </section>
 
@@ -206,24 +198,43 @@
 
         let indiceAtual = 0;
         const respostas = [];
+        let explicouInstrucoes = false; // Controla se a introdução já foi falada
 
         const elementoPergunta = document.getElementById('texto-pergunta');
         const areaClique = document.getElementById('area-clique');
         const logContainer = document.getElementById('log-container');
         const listaRespostas = document.getElementById('lista-respostas');
 
-        // FUNÇÃO DA IA DE VOZ
-        function falarTexto(texto) {
+        function falarTexto(texto, callback) {
             if ('speechSynthesis' in window) {
-                // Cancela qualquer fala que esteja acontecendo no momento para não encavalar
                 window.speechSynthesis.cancel();
 
                 const mensagem = new SpeechSynthesisUtterance(texto);
-                mensagem.lang = 'pt-BR'; // Idioma configurado para português
-                mensagem.rate = 1.0;    // Velocidade natural da voz
-                mensagem.pitch = 1.0;   // Tom de voz padrão
+                mensagem.lang = 'pt-BR';
+                mensagem.rate = 1.0;   
+                mensagem.pitch = 1.0;  
+
+                // Executa uma função (se houver) assim que a IA terminar de falar
+                if (callback) {
+                    mensagem.onend = callback;
+                }
 
                 window.speechSynthesis.speak(mensagem);
+            }
+        }
+
+        function iniciarOuAtualizar() {
+            // Se for a primeira execução, a IA dita as regras do clique primeiro
+            if (!explicouInstrucoes) {
+                explicouInstrucoes = true;
+                const textoInstrucao = "Bem-vindo ao questionário. Regras de resposta: Clique esquerdo significa não. Clique direito significa sim. Vamos para a primeira pergunta.";
+                
+                // Fala a regra e, assim que terminar, chama a primeira pergunta
+                falarTexto(textoInstrucao, () => {
+                    atualizarPergunta();
+                });
+            } else {
+                atualizarPergunta();
             }
         }
 
@@ -231,8 +242,6 @@
             if (indiceAtual < perguntas.length) {
                 const proximaPergunta = perguntas[indiceAtual];
                 elementoPergunta.textContent = proximaPergunta;
-                
-                // A IA lê a pergunta automaticamente assim que ela muda na tela
                 falarTexto(proximaPergunta);
             } else {
                 exibirResultados();
@@ -243,26 +252,22 @@
             if (indiceAtual < perguntas.length) {
                 respostas.push({
                     pergunta: perguntas[indiceAtual],
-                    resposta: responseText = resposta
+                    resposta: resposta
                 });
                 
-                // Feedback por voz rápido para o usuário saber o que clicou
                 falarTexto(`Você respondeu: ${resposta}`);
-                
                 indiceAtual++;
                 
-                // Aguarda um pequeno instante para a voz de feedback terminar antes da próxima pergunta
-                setTimeout(atualizarPergunta, 800);
+                // Pausa curta para processar o feedback falado
+                setTimeout(atualizarPergunta, 1000);
             }
         }
 
-        // Bloqueia menu e registra SIM
         areaClique.addEventListener('contextmenu', function(e) {
             e.preventDefault();
             registrarResposta('SIM');
         });
 
-        // Intercepta clique esquerdo
         areaClique.addEventListener('click', function(e) {
             if (e.button === 0) {
                 registrarResposta('NÃO');
@@ -274,7 +279,7 @@
             logContainer.style.display = 'block';
             listaRespostas.innerHTML = '';
             
-            falarTexto("Questionário concluído. Veja os seus resultados na tela.");
+            falarTexto("Questionário concluído. Seus resultados estão na tela.");
             
             respostas.forEach((item) => {
                 const li = document.createElement('li');
@@ -283,8 +288,8 @@
             });
         }
 
-        // Inicializa o sistema
-        atualizarPergunta();
+        // Modificado para rodar a introdução por voz antes
+        iniciarOuAtualizar();
     </script>
 </body>
 </html>
