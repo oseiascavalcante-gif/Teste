@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acessibilidade Ocular - Questionário Instrutivo</title>
+    <title>Acessibilidade Ocular - Questionário com Teclado e Voz</title>
     <style>
         /* RESET & ACESSIBILIDADE DE CORES */
         * {
@@ -57,11 +57,11 @@
             margin-bottom: 1.5rem;
         }
 
-        /* CAIXA DE INSTRUÇÕES */
+        /* CAIXA DE INSTRUÇÕES (Modificada para Linha Completa e Sólida) */
         .instrucoes {
             background-color: #111d28;
             padding: 25px;
-            border: 4px dashed #00d2ff;
+            border: 4px solid #00d2ff; /* Linha sólida contínua, sem listras */
             border-radius: 12px;
             margin-bottom: 30px;
             text-align: left;
@@ -162,15 +162,17 @@
         <h2>Questionário Interativo</h2>
         
         <div class="instrucoes">
-            <p><strong>Instruções de navegação:</strong></p>
-            <p>  Clique <strong>ESQUERDO</strong> em qualquer lugar central para responder: <strong>NÃO</strong></p>
-            <p>  Clique <strong>DIREITO</strong> em qualquer lugar central para responder: <strong>SIM</strong></p>
+            <p><strong>Como responder pelo Teclado (Não precisa do mouse):</strong></p>
+            <p>⌨️ Pressione a tecla <strong>N</strong> ou <strong>Seta para Esquerda</strong> = ❌ NÃO</p>
+            <p>⌨️ Pressione a tecla <strong>S</strong> ou <strong>Seta para Direita</strong> =  SIM</p>
+            <br>
+            <p style="font-size: 1.3rem; opacity: 0.8;">(Se preferir usar o mouse: Clique esquerdo = NÃO | Clique direito = SIM)</p>
         </div>
 
         <section>
-            <article class="pergunta-card" id="area-clique" aria-label="Área de clique para resposta">
+            <article class="pergunta-card" id="area-clique" aria-label="Área de exibição da pergunta">
                 <img 
-                    src="https://cloudfront-us-east-1.images.arcpublishing.com/estadao/QDNK2LEF4NI5HOKE2JLFTVOGSM.jpg" 
+                    src="image_Qtzjut.png" 
                     alt="Símbolo azul e preto de Acessibilidade Ocular" 
                     class="img-simbolo"
                 >
@@ -198,7 +200,8 @@
 
         let indiceAtual = 0;
         const respostas = [];
-        let explicouInstrucoes = false; // Controla se a introdução já foi falada
+        let explicouInstrucoes = false; 
+        let encerrado = false; // Bloqueia respostas após o fim do teste
 
         const elementoPergunta = document.getElementById('texto-pergunta');
         const areaClique = document.getElementById('area-clique');
@@ -214,7 +217,6 @@
                 mensagem.rate = 1.0;   
                 mensagem.pitch = 1.0;  
 
-                // Executa uma função (se houver) assim que a IA terminar de falar
                 if (callback) {
                     mensagem.onend = callback;
                 }
@@ -224,12 +226,10 @@
         }
 
         function iniciarOuAtualizar() {
-            // Se for a primeira execução, a IA dita as regras do clique primeiro
             if (!explicouInstrucoes) {
                 explicouInstrucoes = true;
-                const textoInstrucao = "Bem-vindo ao questionário. Regras de resposta: Clique esquerdo significa não. Clique direito significa sim. Vamos para a primeira pergunta.";
+                const textoInstrucao = "Bem-vindo ao questionário. Você pode responder usando apenas o teclado. Aperte a letra S para sim, ou a letra N para não. Vamos para a primeira pergunta.";
                 
-                // Fala a regra e, assim que terminar, chama a primeira pergunta
                 falarTexto(textoInstrucao, () => {
                     atualizarPergunta();
                 });
@@ -249,7 +249,7 @@
         }
 
         function registrarResposta(resposta) {
-            if (indiceAtual < perguntas.length) {
+            if (indiceAtual < perguntas.length && !encerrado) {
                 respostas.push({
                     pergunta: perguntas[indiceAtual],
                     resposta: resposta
@@ -258,11 +258,27 @@
                 falarTexto(`Você respondeu: ${resposta}`);
                 indiceAtual++;
                 
-                // Pausa curta para processar o feedback falado
                 setTimeout(atualizarPergunta, 1000);
             }
         }
 
+        // --- SISTEMA DE CAPTURA DO TECLADO (Global na página) ---
+        window.addEventListener('keydown', function(e) {
+            if (encerrado || !explicouInstrucoes) return;
+
+            const tecla = e.key.toLowerCase();
+
+            // S ou Seta para a Direita = SIM
+            if (tecla === 's' || e.key === 'ArrowRight') {
+                registrarResposta('SIM');
+            } 
+            // N ou Seta para a Esquerda = NÃO
+            else if (tecla === 'n' || e.key === 'ArrowLeft') {
+                registrarResposta('NÃO');
+            }
+        });
+
+        // --- CLIQUES DO MOUSE (Como alternativa secundária) ---
         areaClique.addEventListener('contextmenu', function(e) {
             e.preventDefault();
             registrarResposta('SIM');
@@ -275,6 +291,7 @@
         });
 
         function exibirResultados() {
+            encerrado = true;
             areaClique.style.display = 'none';
             logContainer.style.display = 'block';
             listaRespostas.innerHTML = '';
@@ -288,7 +305,7 @@
             });
         }
 
-        // Modificado para rodar a introdução por voz antes
+        // Inicializa o sistema
         iniciarOuAtualizar();
     </script>
 </body>
