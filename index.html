@@ -306,4 +306,119 @@
     </main>
 
     <footer>
-        <p>Projeto desenvolvido com foco em acess
+        <p>Projeto desenvolvido com foco em acessibilidade por Oséias</p>
+    </footer>
+
+    <script>
+        const perguntas = [
+            "Você precisa de ajustes de contraste para ler com clareza?",
+            "Você utiliza leitores de tela durante a navegação?",
+            "Sente facilidade para navegar usando comandos do mouse?",
+            "Deseja salvar suas respostas ao final?"
+        ];
+
+        let indiceAtual = 0;
+        const respostas = [];
+        let explicouInstrucoes = false; 
+        let encerrado = false; 
+
+        const elementoPergunta = document.getElementById('texto-pergunta');
+        const areaQuestionario = document.getElementById('area-questionario');
+        const logContainer = document.getElementById('log-container');
+        const listaRespostas = document.getElementById('lista-respostas');
+        const btnTema = document.getElementById('btn-tema');
+
+        /* ALTERNÂNCIA DE TEMA CLARO / ESCURO */
+        function alternarTema() {
+            const temaAtual = document.documentElement.getAttribute('data-tema');
+            
+            if (temaAtual === 'claro') {
+                document.documentElement.removeAttribute('data-tema');
+                btnTema.textContent = '☀️ Modo Claro';
+                falarTexto("Modo escuro ativado");
+            } else {
+                document.documentElement.setAttribute('data-tema', 'claro');
+                btnTema.textContent = '🌙 Modo Escuro';
+                falarTexto("Modo claro ativado");
+            }
+        }
+
+        function falarTexto(texto, callback) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const mensagem = new SpeechSynthesisUtterance(texto);
+                mensagem.lang = 'pt-BR';
+                mensagem.rate = 1.0;   
+                
+                if (callback) {
+                    mensagem.onend = callback;
+                }
+                window.speechSynthesis.speak(mensagem);
+            }
+        }
+
+        function iniciarOuAtualizar() {
+            if (!explicouInstrucoes) {
+                explicouInstrucoes = true;
+                const textoInstrucao = "Bem-vindo ao questionário acessível. Você pode usar o teclado ou os botões na tela. Aperte S para Sim, ou N para Não.";
+                falarTexto(textoInstrucao, () => {
+                    atualizarPergunta();
+                });
+            } else {
+                atualizarPergunta();
+            }
+        }
+
+        function atualizarPergunta() {
+            if (indiceAtual < perguntas.length) {
+                const proximaPergunta = perguntas[indiceAtual];
+                elementoPergunta.textContent = proximaPergunta;
+                falarTexto(proximaPergunta);
+            } else {
+                exibirResultados();
+            }
+        }
+
+        function registrarResposta(resposta) {
+            if (indiceAtual < perguntas.length && !encerrado) {
+                respostas.push({
+                    pergunta: perguntas[indiceAtual],
+                    resposta: resposta
+                });
+                falarTexto(`Você respondeu: ${resposta}`);
+                indiceAtual++;
+                setTimeout(atualizarPergunta, 800);
+            }
+        }
+
+        window.addEventListener('keydown', function(e) {
+            if (encerrado) return;
+            const tecla = e.key.toLowerCase();
+            
+            if (tecla === 's' || e.key === 'ArrowRight') {
+                registrarResposta('SIM');
+            } else if (tecla === 'n' || e.key === 'ArrowLeft') {
+                registrarResposta('NÃO');
+            }
+        });
+
+        function exibirResultados() {
+            encerrado = true;
+            areaQuestionario.style.display = 'none';
+            logContainer.style.display = 'block';
+            logContainer.focus();
+            
+            listaRespostas.innerHTML = '';
+            falarTexto("Questionário concluído. Seus resultados estão na tela.");
+            
+            respostas.forEach((item) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>Pergunta:</strong> ${item.pergunta} <br> <strong>Resposta:</strong> <span style="color: ${item.resposta === 'SIM' ? 'var(--verde-sucesso)' : 'var(--vermelho-erro)'}; font-weight: bold;">${item.resposta}</span>`;
+                listaRespostas.appendChild(li);
+            });
+        }
+
+        iniciarOuAtualizar();
+    </script>
+</body>
+</html>
