@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acessibilidade Ocular - Questionário Acessível</title>
+    
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Open+Dyslexic&display=swap');
+
         /* VARIÁVEIS DO TEMA ESCURO (PADRÃO) */
         :root {
             --bg-principal: #070d14;
@@ -17,7 +20,8 @@
             --texto-branco: #ffffff;
             --texto-cinza: #94a3b8;
             --cor-foco: #00d2ff;
-            --escala-zoom: 1; /* Controle dinâmico de zoom */
+            --fonte-padrao: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --escala-zoom: 1;
         }
 
         /* VARIÁVEIS DO TEMA CLARO */
@@ -34,6 +38,10 @@
             --cor-foco: #0284c7;
         }
 
+        body.fonte-dislexia {
+            font-family: 'Open Dyslexic', sans-serif !important;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -41,7 +49,7 @@
         }
         
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: var(--fonte-padrao);
             text-align: center;
             background-color: var(--bg-principal); 
             color: var(--texto-branco); 
@@ -51,10 +59,22 @@
             flex-direction: column;
             min-height: 100vh;
             transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-            
-            /* Suporte para redimensionamento e zoom de tela */
             zoom: var(--escala-zoom);
             transform-origin: top center;
+        }
+
+        /* RÉGUA DE LEITURA (GUIA VISUAL) */
+        .regua-leitura {
+            display: none;
+            position: fixed;
+            width: 100%;
+            height: 45px;
+            background: rgba(0, 210, 255, 0.15);
+            border-top: 2px solid var(--azul-neon);
+            border-bottom: 2px solid var(--azul-neon);
+            pointer-events: none;
+            z-index: 9999;
+            left: 0;
         }
 
         header {
@@ -91,7 +111,6 @@
             text-decoration: none;
         }
 
-        /* PAINEL DE CONTROLE ACESSÍVEL (TEMA E ZOOM) */
         .grupo-controles {
             display: flex;
             gap: 8px;
@@ -99,6 +118,8 @@
             padding: 6px 12px;
             border-radius: 20px;
             border: 2px solid var(--azul-borda);
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .btn-controle {
@@ -224,12 +245,13 @@
 
         .btn-sim {
             background-color: var(--verde-sucesso);
-            color: #ffffff;
+            color: #000000;
         }
 
         .btn-sim:hover, .btn-sim:focus-visible {
             opacity: 0.9;
             border-color: var(--texto-branco);
+            color: #ffffff;
         }
 
         .btn-resposta:focus-visible {
@@ -279,6 +301,8 @@
 </head>
 
 <body>
+    <div id="regua-leitura" class="regua-leitura" aria-hidden="true"></div>
+
     <header>
         <h1>Acessibilidade Ocular</h1>
         <div class="header-controles">
@@ -286,10 +310,12 @@
                 <a href="#">Início</a>
             </nav>
             
-            <div class="grupo-controles" aria-label="Controle de Tamanho da Tela">
+            <div class="grupo-controles" aria-label="Controles de Acessibilidade">
                 <button class="btn-controle" onclick="alterarZoom(-0.1)" aria-label="Diminuir Zoom">A-</button>
                 <button class="btn-controle" onclick="redefinirZoom()" aria-label="Redefinir Zoom para 100%">100%</button>
                 <button class="btn-controle" onclick="alterarZoom(0.1)" aria-label="Aumentar Zoom">A+</button>
+                <button class="btn-controle" id="btn-dislexia" onclick="alternarFonteDislexia()">Fonte Dislexia</button>
+                <button class="btn-controle" id="btn-regua" onclick="alternarReguaLeitura()">Régua de Leitura</button>
             </div>
 
             <button class="btn-controle" id="btn-tema" onclick="alternarTema()" aria-label="Alternar modo claro e escuro">
@@ -326,12 +352,23 @@
         <div class="respostas-log" id="log-container" style="display: none;" tabindex="-1">
             <h3>Resultados do Questionário</h3>
             <ul id="lista-respostas"></ul>
+            <br>
+            <button class="btn-resposta btn-sim" onclick="window.print()">Imprimir / Salvar PDF</button>
         </div>
     </main>
 
     <footer>
         <p>Projeto desenvolvido com foco em acessibilidade por Oséias</p>
     </footer>
+
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>new window.VLibras.Widget('https://vlibras.gov.br/app');</script>
 
     <script>
         const perguntas = [
@@ -352,10 +389,31 @@
         const logContainer = document.getElementById('log-container');
         const listaRespostas = document.getElementById('lista-respostas');
         const btnTema = document.getElementById('btn-tema');
+        const regua = document.getElementById('regua-leitura');
+
+        /* GUIA / RÉGUA DE LEITURA VISUAL */
+        document.addEventListener('mousemove', (e) => {
+            if (regua.style.display === 'block') {
+                regua.style.top = `${e.clientY - 22}px`;
+            }
+        });
+
+        function alternarReguaLeitura() {
+            const ativa = regua.style.display === 'block';
+            regua.style.display = ativa ? 'none' : 'block';
+            falarTexto(ativa ? "Régua de leitura desativada" : "Régua de leitura ativada");
+        }
+
+        /* TIPOGRAFIA PARA DISLEXIA */
+        function alternarFonteDislexia() {
+            document.body.classList.toggle('fonte-dislexia');
+            const ativa = document.body.classList.contains('fonte-dislexia');
+            localStorage.setItem('pref_dislexia', ativa);
+            falarTexto(ativa ? "Fonte adaptada para dislexia ativada" : "Fonte padrão ativada");
+        }
 
         /* FUNÇÕES DE ZOOM DA INTERFACE */
         function alterarZoom(delta) {
-            // Limita o zoom entre 80% (0.8) e 160% (1.6)
             const novoZoom = Math.min(Math.max(nivelZoomAtual + delta, 0.8), 1.6);
             nivelZoomAtual = parseFloat(novoZoom.toFixed(1));
             
@@ -376,10 +434,12 @@
             if (temaAtual === 'claro') {
                 document.documentElement.removeAttribute('data-tema');
                 btnTema.textContent = '☀️ Modo Claro';
+                localStorage.setItem('pref_tema', 'escuro');
                 falarTexto("Modo escuro ativado");
             } else {
                 document.documentElement.setAttribute('data-tema', 'claro');
                 btnTema.textContent = '🌙 Modo Escuro';
+                localStorage.setItem('pref_tema', 'claro');
                 falarTexto("Modo claro ativado");
             }
         }
@@ -459,10 +519,17 @@
             });
         }
 
-        iniciarOuAtualizar();
+        /* RECUPERA AS PREFERÊNCIAS AO CARREGAR A PÁGINA */
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('pref_tema') === 'claro') {
+                document.documentElement.setAttribute('data-tema', 'claro');
+                btnTema.textContent = '🌙 Modo Escuro';
+            }
+            if (localStorage.getItem('pref_dislexia') === 'true') {
+                document.body.classList.add('fonte-dislexia');
+            }
+            iniciarOuAtualizar();
+        });
     </script>
 </body>
 </html>
-
-
-
