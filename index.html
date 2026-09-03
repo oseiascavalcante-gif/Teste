@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acessibilidade Ocular - Questionário Ampliado</title>
+    <title>Acessibilidade Ocular - Questionário com Voz</title>
     <style>
-        /* RESET & ACESSIBILIDADE DE CORES (Contraste Máximo) */
+        /* RESET & ACESSIBILIDADE DE CORES (Contraste em Tons de Azul) */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -15,18 +15,18 @@
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             text-align: center;
-            background-color: #000000; /* Fundo preto reduz o cansaço visual e aumenta o contraste */
-            color: #FFFFFF; /* Texto branco puro */
+            background-color: #0b131a; /* Fundo azul escuro profundo para reduzir fadiga visual */
+            color: #FFFFFF; /* Texto branco puro para leitura limpa */
             user-select: none;
-            font-size: 24px; /* Tamanho base muito maior para baixa visão */
+            font-size: 24px; /* Fonte ampliada para baixa visão */
             line-height: 1.6;
         }
 
         header, footer {
-            background-color: #1a1a1a;
-            color: #FFFF00; /* Amarelo tem o maior contraste sob fundo escuro */
+            background-color: #111d28;
+            color: #00d2ff; /* Azul ciano vibrante para máximo contraste e destaque */
             padding: 2rem 1rem;
-            border-bottom: 4px solid #FFFF00;
+            border-bottom: 4px solid #00d2ff;
         }
 
         header h1 {
@@ -35,7 +35,7 @@
         }
 
         nav a {
-            color: #FFFF00;
+            color: #00d2ff;
             font-size: 1.8rem;
             font-weight: bold;
             text-decoration: underline;
@@ -54,15 +54,15 @@
 
         h2 {
             font-size: 2.2rem;
-            color: #FFFF00;
+            color: #00d2ff;
             margin-bottom: 1.5rem;
         }
 
-        /* CAIXA DE INSTRUÇÕES DESTACADA */
+        /* CAIXA DE INSTRUÇÕES COM TEMA AZUL */
         .instrucoes {
-            background-color: #1a1a1a;
+            background-color: #111d28;
             padding: 25px;
-            border: 4px dashed #FFFF00;
+            border: 4px dashed #00d2ff;
             border-radius: 12px;
             margin-bottom: 30px;
             text-align: left;
@@ -74,20 +74,20 @@
         }
 
         .instrucoes strong {
-            color: #FFFF00;
+            color: #00d2ff;
         }
 
-        /* CARD DE CLIQUE GIGANTE E ACESSÍVEL */
+        /* CARD DE CLIQUE GIGANTE */
         .pergunta-card {
-            background: #111111;
+            background: #162535;
             padding: 40px 20px;
             border-radius: 16px;
-            border: 5px solid #3498db; /* Borda azul bem visível */
-            box-shadow: 0 0 25px rgba(52, 152, 219, 0.4);
+            border: 5px solid #3498db; /* Borda azul perceptível */
+            box-shadow: 0 0 25px rgba(0, 210, 255, 0.2);
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
+            transition: background 0.2s, border-color 0.2s, transform 0.1s;
             width: 100%;
-            min-height: 400px; /* Área de alvo vertical imensa */
+            min-height: 400px; /* Alvo imenso para cliques fáceis */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -96,8 +96,8 @@
 
         /* Feedback visual ao passar o mouse */
         .pergunta-card:hover {
-            background: #222222;
-            border-color: #FFFF00;
+            background: #1c3045;
+            border-color: #00d2ff;
         }
 
         .pergunta-card:active {
@@ -110,7 +110,7 @@
             max-width: 250px;
             height: auto;
             margin-bottom: 30px;
-            filter: drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.5));
+            filter: drop-shadow(0px 0px 8px rgba(0, 210, 255, 0.4));
         }
 
         #texto-pergunta {
@@ -125,15 +125,15 @@
         .respostas-log {
             margin-top: 30px;
             text-align: left;
-            background: #111111;
+            background: #111d28;
             padding: 30px;
             border-radius: 12px;
-            border: 4px solid #2ecc71; /* Borda verde para sucesso */
+            border: 4px solid #00ff88; /* Borda verde brilhante para o fim */
         }
 
         .respostas-log h3 {
             font-size: 2rem;
-            color: #2ecc71;
+            color: #00ff88;
             margin-bottom: 20px;
         }
 
@@ -145,13 +145,13 @@
         .respostas-log li {
             font-size: 1.6rem;
             margin-bottom: 15px;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid #1c3045;
             padding-bottom: 10px;
         }
         
         footer {
             margin-top: 40px;
-            border-top: 4px solid #FFFF00;
+            border-top: 4px solid #00d2ff;
             border-bottom: none;
         }
     </style>
@@ -169,15 +169,14 @@
         <h2>Questionário Interativo</h2>
         
         <div class="instrucoes">
-            <p><strong>Como responder dentro da borda azul:</strong></p>
-            <p>Qualquer Clique <strong>ESQUERDO</strong> = ❌ NÃO</p>
-            <p>Qualquer Clique <strong>DIREITO</strong> =  SIM</p>
+            <p><strong>Como responder dentro da área central:</strong></p>
+            <p>Clique <strong>ESQUERDO</strong> = ❌ NÃO</p>
+            <p>Clique <strong>DIREITO</strong> =  SIM</p>
         </div>
 
         <section>
-            <!-- A área inteira deste card agora serve como botão gigante -->
+            <!-- Área de clique acessível -->
             <article class="pergunta-card" id="area-clique" aria-label="Área de clique para resposta">
-                <!-- Usando a imagem de acessibilidade que você enviou -->
                 <img 
                     src="image_Qtzjut.png" 
                     alt="Símbolo azul e preto de Acessibilidade Ocular" 
@@ -213,9 +212,28 @@
         const logContainer = document.getElementById('log-container');
         const listaRespostas = document.getElementById('lista-respostas');
 
+        // FUNÇÃO DA IA DE VOZ
+        function falarTexto(texto) {
+            if ('speechSynthesis' in window) {
+                // Cancela qualquer fala que esteja acontecendo no momento para não encavalar
+                window.speechSynthesis.cancel();
+
+                const mensagem = new SpeechSynthesisUtterance(texto);
+                mensagem.lang = 'pt-BR'; // Idioma configurado para português
+                mensagem.rate = 1.0;    // Velocidade natural da voz
+                mensagem.pitch = 1.0;   // Tom de voz padrão
+
+                window.speechSynthesis.speak(mensagem);
+            }
+        }
+
         function atualizarPergunta() {
             if (indiceAtual < perguntas.length) {
-                elementoPergunta.textContent = perguntas[indiceAtual];
+                const proximaPergunta = perguntas[indiceAtual];
+                elementoPergunta.textContent = proximaPergunta;
+                
+                // A IA lê a pergunta automaticamente assim que ela muda na tela
+                falarTexto(proximaPergunta);
             } else {
                 exibirResultados();
             }
@@ -225,20 +243,26 @@
             if (indiceAtual < perguntas.length) {
                 respostas.push({
                     pergunta: perguntas[indiceAtual],
-                    resposta: resposta
+                    resposta: responseText = resposta
                 });
+                
+                // Feedback por voz rápido para o usuário saber o que clicou
+                falarTexto(`Você respondeu: ${resposta}`);
+                
                 indiceAtual++;
-                atualizarPergunta();
+                
+                // Aguarda um pequeno instante para a voz de feedback terminar antes da próxima pergunta
+                setTimeout(atualizarPergunta, 800);
             }
         }
 
-        // Impede o menu de contexto padrão e registra SIM
+        // Bloqueia menu e registra SIM
         areaClique.addEventListener('contextmenu', function(e) {
             e.preventDefault();
             registrarResposta('SIM');
         });
 
-        // Intercepta o clique esquerdo em qualquer lugar do card gigante
+        // Intercepta clique esquerdo
         areaClique.addEventListener('click', function(e) {
             if (e.button === 0) {
                 registrarResposta('NÃO');
@@ -250,14 +274,16 @@
             logContainer.style.display = 'block';
             listaRespostas.innerHTML = '';
             
+            falarTexto("Questionário concluído. Veja os seus resultados na tela.");
+            
             respostas.forEach((item) => {
                 const li = document.createElement('li');
-                li.innerHTML = `<strong>Pergunta:</strong> ${item.pergunta} <br> <strong>Resposta:</strong> <span style="color: ${item.resposta === 'SIM' ? '#2ecc71' : '#e74c3c'}">${item.resposta}</span>`;
+                li.innerHTML = `<strong>Pergunta:</strong> ${item.pergunta} <br> <strong>Resposta:</strong> <span style="color: ${item.resposta === 'SIM' ? '#00ff88' : '#ff4a4a'}">${item.resposta}</span>`;
                 listaRespostas.appendChild(li);
             });
         }
 
-        // Inicializa o questionário
+        // Inicializa o sistema
         atualizarPergunta();
     </script>
 </body>
