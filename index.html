@@ -3,50 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Acessibilidade Ocular</title>
+    <title>Acessibilidade Ocular - Questionário</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            color: #333;
+            user-select: none; /* Impede a seleção acidental de texto ao clicar rapidamente */
+        }
+
+        header, footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem;
+        }
+
+        main {
+            padding: 2rem;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .instrucoes {
+            background-color: #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .img-simbolo {
+            max-width: 200px;
+            height: auto;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .pergunta-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .respostas-log {
+            margin-top: 20px;
+            text-align: left;
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+        }
+    </style>
 </head>
 
-<body onclick="registrarCliqueGlobal(event)">
+<body>
     <header>
-        <h1>Site para auxiliar quem precisa</h1>
+        <h1>Acessibilidade Ocular</h1>
         <nav>
-            <a href="#">Início</a>
+            <a href="#" style="color: white;">Início</a>
         </nav>
     </header>
 
     <main>
-        <h2>Dar Visão</h2>
-
-        <div id="wrapper-barra-tempo" class="wrapper-barra-tempo">
-            <div id="barra-tempo" class="barra-tempo"></div>
+        <h2>Questionário Interativo</h2>
+        
+        <div class="instrucoes">
+            <p><strong>Como responder:</strong></p>
+            <p>Clique <strong>ESQUERDO</strong> = NÃO</p>
+            <p>Clique <strong>DIREITO</strong> = SIM</p>
         </div>
 
         <section>
-            <article>
-                <div class="container-opcoes">
-                    
-                    <div id="opcao-0" class="bloco-opcao">
-                        <img
-                            src="image_JLJ26-.png"
-                            alt="Símbolo de acessibilidade"
-                            class="img-simbolo acessibilidade"
-                        >
-                        <p>Veja como a acessibilidade é!</p>
-                    </div>
-
-                    <div id="opcao-1" class="bloco-opcao">
-                        <img
-                            src="image_JLJ26-.png"
-                            alt="Símbolo de acessibilidade"
-                            class="img-simbolo acessibilidade"
-                        >
-                        <p>Site de alguma coisa assim, que fui colocado para fazer.</p>
-                    </div>
-
-                </div>
+            <article class="pergunta-card" id="area-clique">
+                <img 
+                    src="https://cloudfront-us-east-1.images.arcpublishing.com/estadao/QDNK2LEF4NI5HOKE2JLFTVOGSM.jpg" 
+                    alt="Símbolo de acessibilidade" 
+                    class="img-simbolo"
+                >
+                <p id="texto-pergunta" style="font-size: 1.2rem; font-weight: bold;">Carregando pergunta...</p>
             </article>
         </section>
+
+        <div class="respostas-log" id="log-container" style="display: none;">
+            <h3>Resultados:</h3>
+            <ul id="lista-respostas"></ul>
+        </div>
     </main>
 
     <footer>
@@ -54,76 +101,68 @@
     </footer>
 
     <script>
-        let indiceFocado = -1;
-        let temporizadorConfirmacao = null;
-        let intervaloProgresso = null;
-        let selecaoBloqueada = false;
+        const perguntas = [
+            "Você precisa de ajustes de contraste para ler com clareza?",
+            "Você utiliza leitores de tela durante a navegação?",
+            "Sente facilidade para navegar usando comandos do mouse?",
+            "Deseja salvar suas respostas ao final?"
+        ];
 
-        const TEMPO_ESPERA_MS = 3000; 
-        const TOTAL_OPCOES = 2;       
+        let indiceAtual = 0;
+        const respostas = [];
 
-        const barraTempo = document.getElementById('barra-tempo');
-        const wrapperBarra = document.getElementById('wrapper-barra-tempo');
+        const elementoPergunta = document.getElementById('texto-pergunta');
+        const areaClique = document.getElementById('area-clique');
+        const logContainer = document.getElementById('log-container');
+        const listaRespostas = document.getElementById('lista-respostas');
 
-        function registrarCliqueGlobal(event) {
-            if (selecaoBloqueada) return;
-
-            limparCronometros();
-
-            indiceFocado++;
-            if (indiceFocado >= TOTAL_OPCOES) {
-                indiceFocado = 0;
+        function atualizarPergunta() {
+            if (indiceAtual < perguntas.length) {
+                elementoPergunta.textContent = perguntas[indiceAtual];
+            } else {
+                exibirResultados();
             }
-
-            for (let i = 0; i < TOTAL_OPCOES; i++) {
-                const elemento = document.getElementById(`opcao-${i}`);
-                if (i === indiceFocado) {
-                    elemento.classList.add('foco-varredura');
-                } else {
-                    elemento.classList.remove('foco-varredura');
-                }
-            }
-
-            dispararContagemRegressiva();
         }
 
-        function dispararContagemRegressiva() {
-            wrapperBarra.style.display = 'block';
-            barraTempo.style.width = '0%';
+        function registrarResposta(resposta) {
+            if (indiceAtual < perguntas.length) {
+                respostas.push({
+                    pergunta: perguntas[indiceAtual],
+                    resposta: resposta
+                });
+                indiceAtual++;
+                atualizarPergunta();
+            }
+        }
+
+        // Impede o menu de contexto padrão no clique direito dentro da área do questionário
+        areaClique.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            registrarResposta('SIM');
+        });
+
+        // Intercepta o clique esquerdo
+        areaClique.addEventListener('click', function(e) {
+            // Garante que o evento dispara apenas com o botão principal (esquerdo)
+            if (e.button === 0) {
+                registrarResposta('NÃO');
+            }
+        });
+
+        function exibirResultados() {
+            areaClique.style.display = 'none';
+            logContainer.style.display = 'block';
+            listaRespostas.innerHTML = '';
             
-            let tempoDecorrido = 0;
-            const intervaloAtualizacao = 50; 
-
-            intervaloProgresso = setInterval(() => {
-                tempoDecorrido += intervaloAtualizacao;
-                const porcentagem = (tempoDecorrido / TEMPO_ESPERA_MS) * 100;
-                barraTempo.style.width = `${porcentagem}%`;
-                
-                if (tempoDecorrido >= TEMPO_ESPERA_MS) {
-                    clearInterval(intervaloProgresso);
-                }
-            }, intervaloAtualizacao);
-
-            temporizadorConfirmacao = setTimeout(() => {
-                finalizarSelecao();
-            }, TEMPO_ESPERA_MS);
+            respostas.forEach((item) => {
+                const li = document.createElement('li');
+                li.textContent = `${item.pergunta} — Resposta: ${item.resposta}`;
+                listaRespostas.appendChild(li);
+            });
         }
 
-        function limparCronometros() {
-            if (temporizadorConfirmacao) clearTimeout(temporizadorConfirmacao);
-            if (intervaloProgresso) clearInterval(intervaloProgresso);
-        }
-
-        function finalizarSelecao() {
-            selecaoBloqueada = true;
-            wrapperBarra.style.display = 'none';
-
-            const elementoSelecionado = document.getElementById(`opcao-${indiceFocado}`);
-            if (elementoSelecionado) {
-                elementoSelecionado.classList.remove('foco-varredura');
-                elementoSelecionado.classList.add('confirmado');
-            }
-        }
+        // Inicializa o questionário
+        atualizarPergunta();
     </script>
 </body>
 </html>
