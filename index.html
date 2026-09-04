@@ -93,7 +93,6 @@
             gap: 0.6rem;
         }
 
-        /* ESTILO DA SUA IMAGEM DE ACESSIBILIDADE */
         .logo-acessibilidade {
             width: 28px;
             height: 28px;
@@ -255,6 +254,17 @@
             color: var(--texto-secundario);
         }
 
+        /* AVISO DE ISENÇÃO DE RESPONSABILIDADE */
+        .disclaimer-tecnico {
+            font-size: 0.8rem;
+            color: var(--texto-secundario);
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.03);
+            border-left: 3px solid var(--cor-borda);
+            border-radius: 4px;
+        }
+
         footer {
             border-top: 1px solid var(--cor-borda);
             padding: 1.5rem;
@@ -276,6 +286,39 @@
             z-index: 9999;
             left: 0;
         }
+
+        /* ESTILOS DE IMPRESSÃO (PDF LIMPO) */
+        @media print {
+            .toolbar-acessibilidade,
+            .progress-container,
+            .instrucoes,
+            .regua-leitura,
+            .btn-exportar {
+                display: none !important;
+            }
+
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+
+            main {
+                margin: 0;
+                padding: 0;
+                max-width: 100%;
+            }
+
+            .respostas-log {
+                border: none;
+                box-shadow: none;
+                padding: 0;
+            }
+
+            .disclaimer-tecnico {
+                background: none;
+                border-left: 2px solid #000;
+            }
+        }
     </style>
 </head>
 
@@ -284,8 +327,7 @@
 
     <header class="toolbar-acessibilidade" role="banner">
         <div class="brand-title">
-            <!-- TROQUE 'sua-imagem.png' PELO CAMINHO DA SUA IMAGEM -->
-            <img src="https://cloudfront-us-east-1.images.arcpublishing.com/estadao/QDNK2LEF4NI5HOKE2JLFTVOGSM.jpg" alt="Símbolo de Acessibilidade" class="logo-acessibilidade">
+            <img src="sua-imagem.png" alt="Símbolo de Acessibilidade" class="logo-acessibilidade">
             Portal de Acessibilidade Ocular
         </div>
         <div class="grupo-controles" role="region" aria-label="Ferramentas de Ajuste da Tela">
@@ -319,10 +361,15 @@
         </section>
 
         <div class="respostas-log" id="log-container" style="display: none;" tabindex="-1">
-            <h3>Resultados da Avaliação</h3>
+            <h3>Relatório de Preferências de Acessibilidade</h3>
             <ul id="lista-respostas"></ul>
+            
+            <p class="disclaimer-tecnico">
+                <strong>Nota:</strong> Este documento trata-se de um relatório de preferências de acessibilidade digital e autoavaliação de navegação, não constituindo laudo médico, diagnóstico clínico ou parecer de saúde visual.
+            </p>
+            
             <br>
-            <button class="btn-resposta btn-sim" style="width: 100%;" onclick="window.print()">Exportar Relatório (PDF)</button>
+            <button class="btn-resposta btn-sim btn-exportar" style="width: 100%;" onclick="window.print()">Exportar Relatório (PDF)</button>
         </div>
     </main>
 
