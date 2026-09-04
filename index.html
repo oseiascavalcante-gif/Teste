@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acessibilidade Ocular - Portal de Diagnóstico</title>
+    <title>Portal de Preferências de Acessibilidade Escolar</title>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Open+Dyslexic:wght@400;700&display=swap');
+        /* Importação confiável da OpenDyslexic via CDNJS */
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/opendyslexic/0.7.3/opendyslexic.min.css');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-        /* VARIÁVEIS DO TEMA CLARO (PADRÃO DO SITE) */
+        /* VARIÁVEIS DO TEMA CLARO */
         :root {
             --bg-principal: #f8fafc;
             --bg-card: #ffffff;
@@ -28,7 +30,7 @@
             font-size: var(--tamanho-base);
         }
 
-        /* VARIÁVEIS DO TEMA ESCURO (ATIVADO VIA BOTÃO OU MEMÓRIA) */
+        /* VARIÁVEIS DO TEMA ESCURO */
         [data-tema="escuro"] {
             --bg-principal: #0b132b;
             --bg-card: #1c2541;
@@ -44,7 +46,7 @@
         }
 
         body.fonte-dislexia {
-            font-family: 'Open Dyslexic', sans-serif !important;
+            font-family: 'OpenDyslexic', sans-serif !important;
         }
 
         * {
@@ -91,12 +93,6 @@
             display: flex;
             align-items: center;
             gap: 0.6rem;
-        }
-
-        .logo-acessibilidade {
-            width: 28px;
-            height: 28px;
-            object-fit: contain;
         }
 
         .grupo-controles {
@@ -166,23 +162,56 @@
             color: var(--texto-principal);
         }
 
-        /* CARTÃO DA PERGUNTA */
-        .pergunta-card {
+        /* CARTÃO PADRÃO */
+        .card-container {
             background-color: var(--bg-card);
             border: 1px solid var(--cor-borda);
             border-radius: 16px;
-            padding: 2.5rem 2rem;
+            padding: 2rem;
             box-shadow: var(--sombra-card);
-            text-align: center;
             display: flex;
             flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card-container h2 {
+            font-size: 1.4rem;
+            color: var(--texto-principal);
+        }
+
+        /* FORMULÁRIO DE IDENTIFICAÇÃO */
+        .form-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: left;
+        }
+
+        .form-grupo label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--texto-principal);
+        }
+
+        .form-input {
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: var(--bg-principal);
+            color: var(--texto-principal);
+        }
+
+        /* CARTÃO DA PERGUNTA */
+        .pergunta-card {
+            text-align: center;
             gap: 2rem;
         }
 
         .pergunta-card h2 {
-            font-size: 1.5rem;
+            font-size: 1.35rem;
             font-weight: 600;
-            color: var(--texto-principal);
+            line-height: 1.5;
         }
 
         .botoes-container {
@@ -225,19 +254,19 @@
             filter: brightness(1.1);
         }
 
-        /* LOG DE RESULTADOS */
-        .respostas-log {
-            background-color: var(--bg-card);
-            border: 1px solid var(--cor-borda);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: var(--sombra-card);
-        }
-
+        /* LOG DE RESULTADOS E RECOMENDAÇÕES */
         .respostas-log h3 {
             font-size: 1.4rem;
-            margin-bottom: 1.5rem;
-            color: var(--verde-sucesso);
+            color: var(--cor-primaria);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-aluno-header {
+            border-bottom: 2px solid var(--cor-borda);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: var(--texto-secundario);
         }
 
         .respostas-log ul {
@@ -248,10 +277,36 @@
         }
 
         .respostas-log li {
-            padding-bottom: 1rem;
+            padding-bottom: 0.8rem;
             border-bottom: 1px solid var(--cor-borda);
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--texto-secundario);
+        }
+
+        .secao-recomendacoes {
+            margin-top: 1.5rem;
+            background-color: var(--bg-principal);
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+
+        .secao-recomendacoes h4 {
+            color: var(--texto-principal);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .secao-recomendacoes ul {
+            list-style: disc;
+            padding-left: 1.2rem;
+            gap: 0.6rem;
+        }
+
+        .secao-recomendacoes li {
+            border-bottom: none;
+            padding-bottom: 0;
+            color: var(--texto-principal);
         }
 
         .disclaimer-tecnico {
@@ -286,7 +341,7 @@
             left: 0;
         }
 
-        /* IMPRESSÃO LIMPA PARA PDF */
+        /* ESTILOS DE IMPRESSÃO (PDF LIMPO) */
         @media print {
             .toolbar-acessibilidade,
             .progress-container,
@@ -307,10 +362,15 @@
                 max-width: 100%;
             }
 
-            .respostas-log {
+            .card-container {
                 border: none;
                 box-shadow: none;
                 padding: 0;
+            }
+
+            .secao-recomendacoes {
+                border: 1px solid #ccc;
+                background: #f9f9f9;
             }
 
             .disclaimer-tecnico {
@@ -326,8 +386,7 @@
 
     <header class="toolbar-acessibilidade" role="banner">
         <div class="brand-title">
-            <img src="sua-imagem.png" alt="Símbolo de Acessibilidade" class="logo-acessibilidade">
-            Portal de Acessibilidade Ocular
+            Portal de Acessibilidade Escolar
         </div>
         <div class="grupo-controles" role="region" aria-label="Ferramentas de Ajuste da Tela">
             <button class="btn-controle" onclick="alterarZoom(-10)" aria-label="Diminuir texto">A-</button>
@@ -345,13 +404,32 @@
             <div class="progress-bar" id="barra-progresso"></div>
         </div>
 
-        <section class="instrucoes" aria-label="Atalhos de teclado">
-            <p><strong>Navegação rápida:</strong> Use a tecla <kbd>N</kbd> ou <kbd>←</kbd> para <strong>NÃO</strong> | Pressione <kbd>S</kbd> ou <kbd>→</kbd> para <strong>SIM</strong>.</p>
+        <!-- TELA 1: IDENTIFICAÇÃO DO ALUNOS -->
+        <section id="area-identificacao" class="card-container">
+            <h2>Identificação do Aluno</h2>
+            <p style="color: var(--texto-secundario); font-size: 0.95rem;">Preencha os dados abaixo para personalizar o relatório pedagógico antes de iniciar o questionário.</p>
+
+            <div class="form-grupo">
+                <label for="nome-aluno">Nome do Aluno(a):</label>
+                <input type="text" id="nome-aluno" class="form-input" placeholder="Ex: Lucas Silva">
+            </div>
+
+            <div class="form-grupo">
+                <label for="turma-aluno">Turma / Ano Escolar:</label>
+                <input type="text" id="turma-aluno" class="form-input" placeholder="Ex: 7º Ano B">
+            </div>
+
+            <button class="btn-resposta btn-sim" onclick="iniciarQuestionario()" style="margin-top: 0.5rem;">Iniciar Triagem de Leitura</button>
         </section>
 
-        <section id="area-questionario">
-            <article class="pergunta-card">
-                <h2 id="texto-pergunta" aria-live="assertive">Carregando questionário...</h2>
+        <!-- TELA 2: QUESTIONÁRIO -->
+        <section id="area-questionario" style="display: none;">
+            <section class="instrucoes" aria-label="Atalhos de teclado" style="margin-bottom: 1.5rem;">
+                <p><strong>Atalhos de Teclado:</strong> Pressione <kbd>N</kbd> ou <kbd>←</kbd> para <strong>NÃO</strong> | Pressione <kbd>S</kbd> ou <kbd>→</kbd> para <strong>SIM</strong>.</p>
+            </section>
+
+            <article class="card-container pergunta-card">
+                <h2 id="texto-pergunta" aria-live="assertive">Carregando pergunta...</h2>
 
                 <div class="botoes-container">
                     <button class="btn-resposta btn-nao" id="btn-nao" onclick="registrarResposta('NÃO')">NÃO (N)</button>
@@ -360,16 +438,30 @@
             </article>
         </section>
 
-        <div class="respostas-log" id="log-container" style="display: none;" tabindex="-1">
-            <h3>Relatório de Preferências de Acessibilidade</h3>
+        <!-- TELA 3: RELATÓRIO FINAL COM RECOMENDAÇÕES PEDAGÓGICAS -->
+        <div class="card-container respostas-log" id="log-container" style="display: none;" tabindex="-1">
+            <h3>Relatório de Preferências de Acessibilidade Escolar</h3>
+            
+            <div class="info-aluno-header" id="info-aluno-header">
+                <!-- Preenchido via JS -->
+            </div>
+
+            <h4 style="margin-bottom: 0.8rem;">Respostas Registradas:</h4>
             <ul id="lista-respostas"></ul>
+
+            <div class="secao-recomendacoes">
+                <h4>💡 Orientações Pedagógicas para o Professor / AEE:</h4>
+                <ul id="lista-recomendacoes">
+                    <!-- Geradas dinamicamente via JS -->
+                </ul>
+            </div>
             
             <p class="disclaimer-tecnico">
-                <strong>Nota:</strong> Este documento trata-se de um relatório de preferências de acessibilidade digital e autoavaliação de navegação, não constituindo laudo médico, diagnóstico clínico ou parecer de saúde visual.
+                <strong>Isenção Técnica:</strong> Este documento trata-se de um relatório pedagógico de preferências de acessibilidade e autoavaliação de leitura, não constituindo laudo médico, diagnóstico clínico ou parecer de saúde visual.
             </p>
             
             <br>
-            <button class="btn-resposta btn-sim btn-exportar" style="width: 100%;" onclick="window.print()">Exportar Relatório (PDF)</button>
+            <button class="btn-resposta btn-sim btn-exportar" style="width: 100%;" onclick="window.print()">Exportar Relatório Pedagógico (PDF)</button>
         </div>
     </main>
 
@@ -378,11 +470,32 @@
     </footer>
 
     <script>
+        // PERGUNTAS FOCADAS NA ROTINA ESCOLAR E APRENDIZADO
         const perguntas = [
-            "Você precisa de ajustes de contraste para ler com clareza?",
-            "Você utiliza leitores de tela durante a navegação?",
-            "Sente facilidade para navegar usando comandos do mouse?",
-            "Deseja salvar suas respostas ao final?"
+            {
+                id: 'cansaco',
+                texto: "Você sente dor de cabeça, vista cansada ou coceira nos olhos ao ler textos longos na tela ou no papel?",
+                recSim: "Permitir pausas curtas durante leituras extensas e disponibilizar fontes com tamanho ampliado ou espaçamento 1.5x.",
+                recNao: "Conforto visual adequado para extensões padrão de texto."
+            },
+            {
+                id: 'rastreamento',
+                texto: "Quando você está lendo, costuma se perder entre as linhas ou precisa usar o dedo/régua para acompanhar o texto?",
+                recSim: "Recomendado o uso de régua de leitura (física/digital) e layout de página com colunas mais estreitas ou margens amplas.",
+                recNao: "Rastreamento visual contínuo sem necessidade de guias físicas."
+            },
+            {
+                id: 'luz',
+                texto: "A luz branca e brilhante da tela ou do papel atrabalha sua concentração ao ler?",
+                recSim: "Utilizar alto contraste, fundo escuro/sépias nas telas ou fornecer impressos em papel sem brilho (offset).",
+                recNao: "Adaptação normal a ambientes com iluminação brilhante."
+            },
+            {
+                id: 'audio',
+                texto: "Você entende e memoriza melhor a matéria quando ouve a explicação em áudio em vez de apenas ler o texto?",
+                recSim: "Aluno se beneficia fortemente de recursos multimídia, leitor de voz sintetizada ou áudios complementares.",
+                recNao: "Preferência ou boa assimilação por meio da leitura textual direta."
+            }
         ];
 
         let indiceAtual = 0;
@@ -390,17 +503,20 @@
         let encerrado = false; 
         let percentualZoom = 100;
         let velocidadeVoz = 1.0;
+        let dadosAluno = { nome: '', turma: '', data: '' };
 
         const elementoPergunta = document.getElementById('texto-pergunta');
+        const areaIdentificacao = document.getElementById('area-identificacao');
         const areaQuestionario = document.getElementById('area-questionario');
         const logContainer = document.getElementById('log-container');
         const listaRespostas = document.getElementById('lista-respostas');
+        const listaRecomendacoes = document.getElementById('lista-recomendacoes');
         const barraProgresso = document.getElementById('barra-progresso');
         const btnTema = document.getElementById('btn-tema');
         const btnVelocidade = document.getElementById('btn-velocidade');
         const regua = document.getElementById('regua-leitura');
 
-        // WEB AUDIO API - SISTEMA DE SONS GERADOS POR CÓDIGO
+        // WEB AUDIO API
         let audioCtx;
 
         function inicializarAudio() {
@@ -421,19 +537,18 @@
             ganho.connect(audioCtx.destination);
 
             if (tipo === 'sim') {
-                oscilador.frequency.setValueAtTime(520, audioCtx.currentTime); // Tom Agudo (SIM)
+                oscilador.frequency.setValueAtTime(520, audioCtx.currentTime);
                 ganho.gain.setValueAtTime(0.08, audioCtx.currentTime);
                 ganho.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
                 oscilador.start();
                 oscilador.stop(audioCtx.currentTime + 0.15);
             } else if (tipo === 'nao') {
-                oscilador.frequency.setValueAtTime(260, audioCtx.currentTime); // Tom Grave (NÃO)
+                oscilador.frequency.setValueAtTime(260, audioCtx.currentTime);
                 ganho.gain.setValueAtTime(0.08, audioCtx.currentTime);
                 ganho.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
                 oscilador.start();
                 oscilador.stop(audioCtx.currentTime + 0.2);
             } else if (tipo === 'concluido') {
-                // Efeito sonoro final curto
                 oscilador.frequency.setValueAtTime(440, audioCtx.currentTime);
                 oscilador.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3);
                 ganho.gain.setValueAtTime(0.08, audioCtx.currentTime);
@@ -443,7 +558,7 @@
             }
         }
 
-        // CONTROLE DA RÉGUA DE LEITURA
+        // CONTROLES DE INTERFACE
         document.addEventListener('mousemove', (e) => {
             if (regua.style.display === 'block') {
                 regua.style.top = `${e.clientY - 20}px`;
@@ -456,7 +571,6 @@
             falarTexto(!ativa ? "Régua ativada" : "Régua desativada");
         }
 
-        // CONTROLE DA FONTE
         function alternarFonteDislexia() {
             document.body.classList.toggle('fonte-dislexia');
             const ativa = document.body.classList.contains('fonte-dislexia');
@@ -464,7 +578,6 @@
             falarTexto(ativa ? "Fonte para dislexia ativada" : "Fonte padrão ativada");
         }
 
-        // CONTROLE DE ZOOM
         function alterarZoom(delta) {
             percentualZoom = Math.min(Math.max(percentualZoom + delta, 80), 150);
             document.documentElement.style.setProperty('--tamanho-base', `${percentualZoom}%`);
@@ -477,7 +590,6 @@
             falarTexto("Tamanho padrão restaurado");
         }
 
-        // CONTROLE DE VELOCIDADE DA VOZ
         function alternarVelocidadeVoz() {
             if (velocidadeVoz === 1.0) velocidadeVoz = 1.25;
             else if (velocidadeVoz === 1.25) velocidadeVoz = 1.5;
@@ -487,7 +599,6 @@
             falarTexto(`Velocidade da voz ${velocidadeVoz}`);
         }
 
-        // CONTROLE DO TEMA (CLARO / ESCURO)
         function alternarTema() {
             const temaAtual = document.documentElement.getAttribute('data-tema');
             if (temaAtual === 'escuro') {
@@ -503,7 +614,6 @@
             }
         }
 
-        // SÍNTESE DE VOZ NATIVA
         function falarTexto(texto) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -514,12 +624,27 @@
             }
         }
 
+        // FLUXO DO QUESTIONÁRIO
+        function iniciarQuestionario() {
+            const nomeInput = document.getElementById('nome-aluno').value.trim();
+            const turmaInput = document.getElementById('turma-aluno').value.trim();
+
+            dadosAluno.nome = nomeInput !== '' ? nomeInput : 'Aluno não identificado';
+            dadosAluno.turma = turmaInput !== '' ? turmaInput : 'Turma não informada';
+            dadosAluno.data = new Date().toLocaleDateString('pt-BR');
+
+            areaIdentificacao.style.display = 'none';
+            areaQuestionario.style.display = 'block';
+
+            atualizarPergunta();
+        }
+
         function atualizarPergunta() {
             if (indiceAtual < perguntas.length) {
                 const pct = ((indiceAtual) / perguntas.length) * 100;
                 barraProgresso.style.width = `${pct}%`;
                 
-                const proxima = perguntas[indiceAtual];
+                const proxima = perguntas[indiceAtual].texto;
                 elementoPergunta.textContent = proxima;
                 falarTexto(proxima);
             } else {
@@ -531,14 +656,17 @@
         function registrarResposta(resposta) {
             if (indiceAtual < perguntas.length && !encerrado) {
                 tocarSomSintetizado(resposta === 'SIM' ? 'sim' : 'nao');
-                respostas.push({ pergunta: perguntas[indiceAtual], resposta: resposta });
+                respostas.push({ 
+                    item: perguntas[indiceAtual], 
+                    resposta: resposta 
+                });
                 indiceAtual++;
                 setTimeout(atualizarPergunta, 150);
             }
         }
 
         window.addEventListener('keydown', function(e) {
-            if (encerrado) return;
+            if (encerrado || areaQuestionario.style.display === 'none') return;
             const tecla = e.key.toLowerCase();
             if (tecla === 's' || e.key === 'ArrowRight') registrarResposta('SIM');
             if (tecla === 'n' || e.key === 'ArrowLeft') registrarResposta('NÃO');
@@ -551,17 +679,39 @@
             logContainer.style.display = 'block';
             logContainer.focus();
             
+            // Renderiza cabeçalho do aluno
+            document.getElementById('info-aluno-header').innerHTML = `
+                <p><strong>Aluno(a):</strong> ${dadosAluno.nome}</p>
+                <p><strong>Turma:</strong> ${dadosAluno.turma} | <strong>Data da Avaliação:</strong> ${dadosAluno.data}</p>
+            `;
+
             listaRespostas.innerHTML = '';
-            falarTexto("Questionário concluído.");
+            listaRecomendacoes.innerHTML = '';
             
-            respostas.forEach((item) => {
-                const li = document.createElement('li');
-                li.innerHTML = `<strong>${item.pergunta}</strong><br>Resposta: <strong>${item.resposta}</strong>`;
-                listaRespostas.appendChild(li);
+            falarTexto("Questionário concluído. O relatório pedagógico está pronto.");
+            
+            respostas.forEach((res) => {
+                // Adiciona item na lista de respostas
+                const liResp = document.createElement('li');
+                liResp.innerHTML = `<strong>${res.item.texto}</strong><br>Resposta: <strong>${res.resposta}</strong>`;
+                listaRespostas.appendChild(liResp);
+
+                // Adiciona recomendação se a resposta for SIM
+                if (res.resposta === 'SIM') {
+                    const liRec = document.createElement('li');
+                    liRec.textContent = res.item.recSim;
+                    listaRecomendacoes.appendChild(liRec);
+                }
             });
+
+            if (listaRecomendacoes.children.length === 0) {
+                const liRec = document.createElement('li');
+                liRec.textContent = "Nenhuma adaptação específica identificada. Manter configurações de ensino padrão.";
+                listaRecomendacoes.appendChild(liRec);
+            }
         }
 
-        // CARREGAR CONFIGURAÇÕES SALVAS (LOCALSTORAGE)
+        // RESTAURA PREFERÊNCIAS SALVAS
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('temaEscuro') === 'true') {
                 document.documentElement.setAttribute('data-tema', 'escuro');
@@ -570,7 +720,6 @@
             if (localStorage.getItem('fonteDislexia') === 'true') {
                 document.body.classList.add('fonte-dislexia');
             }
-            atualizarPergunta();
         });
     </script>
 </body>
