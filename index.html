@@ -90,7 +90,14 @@
             color: var(--cor-primaria);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
+        }
+
+        /* ESTILO DA SUA IMAGEM DE ACESSIBILIDADE */
+        .logo-acessibilidade {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
         }
 
         .grupo-controles {
@@ -277,7 +284,9 @@
 
     <header class="toolbar-acessibilidade" role="banner">
         <div class="brand-title">
-            👁️ Portal de Acessibilidade Ocular
+            <!-- TROQUE 'sua-imagem.png' PELO CAMINHO DA SUA IMAGEM -->
+            <img src="https://cloudfront-us-east-1.images.arcpublishing.com/estadao/QDNK2LEF4NI5HOKE2JLFTVOGSM.jpg" alt="Símbolo de Acessibilidade" class="logo-acessibilidade">
+            Portal de Acessibilidade Ocular
         </div>
         <div class="grupo-controles" role="region" aria-label="Ferramentas de Ajuste da Tela">
             <button class="btn-controle" onclick="alterarZoom(-10)" aria-label="Diminuir texto">A-</button>
@@ -372,7 +381,6 @@
             falarTexto("Tamanho padrão restaurado");
         }
 
-        /* LÓGICA DE ALTERNÂNCIA (PADRÃO CLARO -> ALTERNA PARA ESCURO) */
         function alternarTema() {
             const temaAtual = document.documentElement.getAttribute('data-tema');
             if (temaAtual === 'escuro') {
@@ -412,9 +420,8 @@
         function registrarResposta(resposta) {
             if (indiceAtual < perguntas.length && !encerrado) {
                 respostas.push({ pergunta: perguntas[indiceAtual], resposta: resposta });
-                falarTexto(`Registrado ${resposta}`);
                 indiceAtual++;
-                setTimeout(atualizarPergunta, 400);
+                setTimeout(atualizarPergunta, 150);
             }
         }
 
