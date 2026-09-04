@@ -28,7 +28,7 @@
             font-size: var(--tamanho-base);
         }
 
-        /* VARIÁVEIS DO TEMA ESCURO (ATIVADO VIA BOTÃO) */
+        /* VARIÁVEIS DO TEMA ESCURO (ATIVADO VIA BOTÃO OU MEMÓRIA) */
         [data-tema="escuro"] {
             --bg-principal: #0b132b;
             --bg-card: #1c2541;
@@ -254,7 +254,6 @@
             color: var(--texto-secundario);
         }
 
-        /* AVISO DE ISENÇÃO DE RESPONSABILIDADE */
         .disclaimer-tecnico {
             font-size: 0.8rem;
             color: var(--texto-secundario);
@@ -287,7 +286,7 @@
             left: 0;
         }
 
-        /* ESTILOS DE IMPRESSÃO (PDF LIMPO) */
+        /* IMPRESSÃO LIMPA PARA PDF */
         @media print {
             .toolbar-acessibilidade,
             .progress-container,
@@ -327,7 +326,7 @@
 
     <header class="toolbar-acessibilidade" role="banner">
         <div class="brand-title">
-            <img src="https://cloudfront-us-east-1.images.arcpublishing.com/estadao/QDNK2LEF4NI5HOKE2JLFTVOGSM.jpg" alt="Símbolo de Acessibilidade" class="logo-acessibilidade">
+            <img src="sua-imagem.png" alt="Símbolo de Acessibilidade" class="logo-acessibilidade">
             Portal de Acessibilidade Ocular
         </div>
         <div class="grupo-controles" role="region" aria-label="Ferramentas de Ajuste da Tela">
@@ -336,6 +335,7 @@
             <button class="btn-controle" onclick="alterarZoom(10)" aria-label="Aumentar texto">A+</button>
             <button class="btn-controle" onclick="alternarFonteDislexia()">Fonte Adaptada</button>
             <button class="btn-controle" onclick="alternarReguaLeitura()">Régua de Leitura</button>
+            <button class="btn-controle" id="btn-velocidade" onclick="alternarVelocidadeVoz()">Voz: 1x</button>
             <button class="btn-controle" id="btn-tema" onclick="alternarTema()">🌙 Modo Escuro</button>
         </div>
     </header>
@@ -389,6 +389,7 @@
         const respostas = [];
         let encerrado = false; 
         let percentualZoom = 100;
+        let velocidadeVoz = 1.0;
 
         const elementoPergunta = document.getElementById('texto-pergunta');
         const areaQuestionario = document.getElementById('area-questionario');
@@ -396,8 +397,53 @@
         const listaRespostas = document.getElementById('lista-respostas');
         const barraProgresso = document.getElementById('barra-progresso');
         const btnTema = document.getElementById('btn-tema');
+        const btnVelocidade = document.getElementById('btn-velocidade');
         const regua = document.getElementById('regua-leitura');
 
+        // WEB AUDIO API - SISTEMA DE SONS GERADOS POR CÓDIGO
+        let audioCtx;
+
+        function inicializarAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function tocarSomSintetizado(tipo) {
+            inicializarAudio();
+            const oscilador = audioCtx.createOscillator();
+            const ganho = audioCtx.createGain();
+
+            oscilador.connect(ganho);
+            ganho.connect(audioCtx.destination);
+
+            if (tipo === 'sim') {
+                oscilador.frequency.setValueAtTime(520, audioCtx.currentTime); // Tom Agudo (SIM)
+                ganho.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                ganho.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                oscilador.start();
+                oscilador.stop(audioCtx.currentTime + 0.15);
+            } else if (tipo === 'nao') {
+                oscilador.frequency.setValueAtTime(260, audioCtx.currentTime); // Tom Grave (NÃO)
+                ganho.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                ganho.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+                oscilador.start();
+                oscilador.stop(audioCtx.currentTime + 0.2);
+            } else if (tipo === 'concluido') {
+                // Efeito sonoro final curto
+                oscilador.frequency.setValueAtTime(440, audioCtx.currentTime);
+                oscilador.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3);
+                ganho.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                ganho.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                oscilador.start();
+                oscilador.stop(audioCtx.currentTime + 0.3);
+            }
+        }
+
+        // CONTROLE DA RÉGUA DE LEITURA
         document.addEventListener('mousemove', (e) => {
             if (regua.style.display === 'block') {
                 regua.style.top = `${e.clientY - 20}px`;
@@ -410,12 +456,15 @@
             falarTexto(!ativa ? "Régua ativada" : "Régua desativada");
         }
 
+        // CONTROLE DA FONTE
         function alternarFonteDislexia() {
             document.body.classList.toggle('fonte-dislexia');
             const ativa = document.body.classList.contains('fonte-dislexia');
+            localStorage.setItem('fonteDislexia', ativa ? 'true' : 'false');
             falarTexto(ativa ? "Fonte para dislexia ativada" : "Fonte padrão ativada");
         }
 
+        // CONTROLE DE ZOOM
         function alterarZoom(delta) {
             percentualZoom = Math.min(Math.max(percentualZoom + delta, 80), 150);
             document.documentElement.style.setProperty('--tamanho-base', `${percentualZoom}%`);
@@ -428,24 +477,39 @@
             falarTexto("Tamanho padrão restaurado");
         }
 
+        // CONTROLE DE VELOCIDADE DA VOZ
+        function alternarVelocidadeVoz() {
+            if (velocidadeVoz === 1.0) velocidadeVoz = 1.25;
+            else if (velocidadeVoz === 1.25) velocidadeVoz = 1.5;
+            else velocidadeVoz = 1.0;
+
+            btnVelocidade.textContent = `Voz: ${velocidadeVoz}x`;
+            falarTexto(`Velocidade da voz ${velocidadeVoz}`);
+        }
+
+        // CONTROLE DO TEMA (CLARO / ESCURO)
         function alternarTema() {
             const temaAtual = document.documentElement.getAttribute('data-tema');
             if (temaAtual === 'escuro') {
                 document.documentElement.removeAttribute('data-tema');
                 btnTema.textContent = '🌙 Modo Escuro';
+                localStorage.setItem('temaEscuro', 'false');
                 falarTexto("Modo claro ativado");
             } else {
                 document.documentElement.setAttribute('data-tema', 'escuro');
                 btnTema.textContent = '☀️ Modo Claro';
+                localStorage.setItem('temaEscuro', 'true');
                 falarTexto("Modo escuro ativado");
             }
         }
 
+        // SÍNTESE DE VOZ NATIVA
         function falarTexto(texto) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const mensagem = new SpeechSynthesisUtterance(texto);
                 mensagem.lang = 'pt-BR';
+                mensagem.rate = velocidadeVoz;
                 window.speechSynthesis.speak(mensagem);
             }
         }
@@ -466,6 +530,7 @@
 
         function registrarResposta(resposta) {
             if (indiceAtual < perguntas.length && !encerrado) {
+                tocarSomSintetizado(resposta === 'SIM' ? 'sim' : 'nao');
                 respostas.push({ pergunta: perguntas[indiceAtual], resposta: resposta });
                 indiceAtual++;
                 setTimeout(atualizarPergunta, 150);
@@ -481,6 +546,7 @@
 
         function exibirResultados() {
             encerrado = true;
+            tocarSomSintetizado('concluido');
             areaQuestionario.style.display = 'none';
             logContainer.style.display = 'block';
             logContainer.focus();
@@ -495,7 +561,15 @@
             });
         }
 
+        // CARREGAR CONFIGURAÇÕES SALVAS (LOCALSTORAGE)
         window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('temaEscuro') === 'true') {
+                document.documentElement.setAttribute('data-tema', 'escuro');
+                btnTema.textContent = '☀️ Modo Claro';
+            }
+            if (localStorage.getItem('fonteDislexia') === 'true') {
+                document.body.classList.add('fonte-dislexia');
+            }
             atualizarPergunta();
         });
     </script>
