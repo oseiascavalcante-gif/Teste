@@ -441,8 +441,9 @@
             </div>
 
             <div class="form-grupo">
-                <label for="turma-aluno">Turma / Ano Escolar:</label>
-                <input type="text" id="turma-aluno" class="form-input" placeholder="Ex: 7º Ano B">
+                <label for="turma-aluno">Turma / Ano Escolar: <span style="color: var(--vermelho-erro);">*</span></label>
+                <input type="text" id="turma-aluno" class="form-input" placeholder="Ex: 7º Ano B" required>
+                <span id="erro-turma" class="mensagem-erro">Por favor, informe a turma do aluno antes de continuar.</span>
             </div>
 
             <button class="btn-resposta btn-sim" onclick="iniciarQuestionario()" style="margin-top: 0.5rem;">Iniciar Triagem de Leitura</button>
@@ -553,6 +554,7 @@
         const btnVelocidade = document.getElementById('btn-velocidade');
         const regua = document.getElementById('regua-leitura');
         const erroNome = document.getElementById('erro-nome');
+        const erroTurma = document.getElementById('erro-turma');
 
         let audioCtx;
 
@@ -664,16 +666,34 @@
             const nomeInput = document.getElementById('nome-aluno').value.trim();
             const turmaInput = document.getElementById('turma-aluno').value.trim();
 
+            let valido = true;
+
             if (nomeInput === '') {
                 erroNome.style.display = 'block';
-                document.getElementById('nome-aluno').focus();
-                falarTexto("Por favor, preencha o nome do aluno para continuar.");
+                valido = false;
+            } else {
+                erroNome.style.display = 'none';
+            }
+
+            if (turmaInput === '') {
+                erroTurma.style.display = 'block';
+                valido = false;
+            } else {
+                erroTurma.style.display = 'none';
+            }
+
+            if (!valido) {
+                if (nomeInput === '') {
+                    document.getElementById('nome-aluno').focus();
+                } else {
+                    document.getElementById('turma-aluno').focus();
+                }
+                falarTexto("Por favor, preencha o nome e a turma do aluno para continuar.");
                 return;
             }
 
-            erroNome.style.display = 'none';
             dadosAluno.nome = nomeInput;
-            dadosAluno.turma = turmaInput !== '' ? turmaInput : 'Turma não informada';
+            dadosAluno.turma = turmaInput;
             dadosAluno.data = new Date().toLocaleDateString('pt-BR');
 
             areaIdentificacao.style.display = 'none';
@@ -763,6 +783,8 @@
             
             document.getElementById('nome-aluno').value = '';
             document.getElementById('turma-aluno').value = '';
+            erroNome.style.display = 'none';
+            erroTurma.style.display = 'none';
             barraProgresso.style.width = '0%';
             
             logContainer.style.display = 'none';
