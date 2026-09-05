@@ -6,11 +6,9 @@
     <title>Portal de Preferências de Acessibilidade Escolar</title>
     
     <style>
-        /* Importação confiável da OpenDyslexic via CDNJS */
         @import url('https://cdnjs.cloudflare.com/ajax/libs/opendyslexic/0.7.3/opendyslexic.min.css');
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-        /* VARIÁVEIS DO TEMA CLARO */
         :root {
             --bg-principal: #f8fafc;
             --bg-card: #ffffff;
@@ -22,7 +20,7 @@
             --texto-principal: #0f172a;
             --texto-secundario: #475569;
             --cor-foco: #d97706;
-            --sombra-card: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            --sombra-card: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
             --tamanho-base: 100%;
         }
 
@@ -30,7 +28,6 @@
             font-size: var(--tamanho-base);
         }
 
-        /* VARIÁVEIS DO TEMA ESCURO */
         [data-tema="escuro"] {
             --bg-principal: #0b132b;
             --bg-card: #1c2541;
@@ -42,7 +39,7 @@
             --texto-principal: #ffffff;
             --texto-secundario: #94a3b8;
             --cor-foco: #f59e0b;
-            --sombra-card: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            --sombra-card: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
 
         body.fonte-dislexia {
@@ -71,7 +68,7 @@
             outline-offset: 3px !important;
         }
 
-        /* BARRA SUPERIOR FIXA */
+        /* BARRA SUPERIOR FIXA COM SOM */
         .toolbar-acessibilidade {
             background-color: var(--bg-card);
             border-bottom: 1px solid var(--cor-borda);
@@ -90,9 +87,6 @@
             font-size: 1.1rem;
             font-weight: 700;
             color: var(--cor-primaria);
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
         }
 
         .grupo-controles {
@@ -107,7 +101,7 @@
             border: 1px solid var(--cor-borda);
             color: var(--texto-principal);
             padding: 0.4rem 0.8rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
@@ -131,7 +125,6 @@
             gap: 1.5rem;
         }
 
-        /* BARRA DE PROGRESSO */
         .progress-container {
             width: 100%;
             background-color: var(--bg-card);
@@ -158,11 +151,6 @@
             box-shadow: var(--sombra-card);
         }
 
-        .instrucoes strong {
-            color: var(--texto-principal);
-        }
-
-        /* CARTÃO PADRÃO */
         .card-container {
             background-color: var(--bg-card);
             border: 1px solid var(--cor-borda);
@@ -179,12 +167,10 @@
             color: var(--texto-principal);
         }
 
-        /* FORMULÁRIO DE IDENTIFICAÇÃO */
         .form-grupo {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            text-align: left;
         }
 
         .form-grupo label {
@@ -202,7 +188,6 @@
             color: var(--texto-principal);
         }
 
-        /* CARTÃO DA PERGUNTA */
         .pergunta-card {
             text-align: center;
             gap: 2rem;
@@ -254,7 +239,6 @@
             filter: brightness(1.1);
         }
 
-        /* LOG DE RESULTADOS E RECOMENDAÇÕES */
         .respostas-log h3 {
             font-size: 1.4rem;
             color: var(--cor-primaria);
@@ -341,15 +325,14 @@
             left: 0;
         }
 
-        /* ESTILOS DE IMPRESSÃO (PDF LIMPO) */
         @media print {
             .toolbar-acessibilidade,
             .progress-container,
             .instrucoes,
             .regua-leitura,
-            .player-container,
             .secao-explicativa,
-            .btn-exportar {
+            .btn-exportar,
+            .secao-audio-externo {
                 display: none !important;
             }
 
@@ -369,16 +352,6 @@
                 box-shadow: none;
                 padding: 0;
             }
-
-            .secao-recomendacoes {
-                border: 1px solid #ccc;
-                background: #f9f9f9;
-            }
-
-            .disclaimer-tecnico {
-                background: none;
-                border-left: 2px solid #000;
-            }
         }
     </style>
 </head>
@@ -388,16 +361,17 @@
 
     <header class="toolbar-acessibilidade" role="banner">
         <div class="brand-title">
-            Portal de Acessibilidade Escolar
+            Portal de Acessibilidade
         </div>
-        <div class="grupo-controles" role="region" aria-label="Ferramentas de Ajuste da Tela">
+        <div class="grupo-controles" role="region" aria-label="Ferramentas de Acessibilidade">
+            <button class="btn-controle" id="btn-musica" onclick="alternarMusicaFundo()">🎵 Som Ambiente</button>
             <button class="btn-controle" onclick="alterarZoom(-10)" aria-label="Diminuir texto">A-</button>
             <button class="btn-controle" onclick="redefinirZoom()" aria-label="Tamanho original">100%</button>
             <button class="btn-controle" onclick="alterarZoom(10)" aria-label="Aumentar texto">A+</button>
             <button class="btn-controle" onclick="alternarFonteDislexia()">Fonte Adaptada</button>
-            <button class="btn-controle" onclick="alternarReguaLeitura()">Régua de Leitura</button>
+            <button class="btn-controle" onclick="alternarReguaLeitura()">Régua</button>
             <button class="btn-controle" id="btn-velocidade" onclick="alternarVelocidadeVoz()">Voz: 1x</button>
-            <button class="btn-controle" id="btn-tema" onclick="alternarTema()">🌙 Modo Escuro</button>
+            <button class="btn-controle" id="btn-tema" onclick="alternarTema()">🌙 Escuro</button>
         </div>
     </header>
 
@@ -405,18 +379,6 @@
         <div class="progress-container" aria-hidden="true">
             <div class="progress-bar" id="barra-progresso"></div>
         </div>
-
-        <!-- PLAYER DE MÚSICA DE FUNDO -->
-        <section class="card-container player-container" style="align-items: center; text-align: center;">
-            <h2>🎵 Trilha Sonora de Acompanhamento</h2>
-            <p style="font-size: 0.9rem; color: var(--texto-secundario);">
-                Ative a música abaixo para criar um ambiente calmo e concentrado durante o uso do portal.
-            </p>
-            <div style="width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center;">
-                <iframe src="https://audio.com/embed/v2/audio/1871334286400667?theme=dark&layout=fixed&cover=true&footer=true&author=true&watermark=true" style="display:block; border-radius: 12px; border: none; height: 235px; width: 100%; max-width: 500px;" loading="lazy" data-audiocom-embed></iframe>
-                <a href='https://audio.com/hazel-1855329352159538' target="_blank" style="text-align: center; display: block; color: var(--texto-secundario); font-size: 12px; font-family: sans-serif; line-height: 16px; margin-top: 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-decoration: none;">@hazel-1855329352159538</a>
-            </div>
-        </section>
 
         <!-- TELA 1: IDENTIFICAÇÃO DO ALUNO -->
         <section id="area-identificacao" class="card-container">
@@ -456,37 +418,39 @@
         <div class="card-container respostas-log" id="log-container" style="display: none;" tabindex="-1">
             <h3>Relatório de Preferências de Acessibilidade Escolar</h3>
             
-            <div class="info-aluno-header" id="info-aluno-header">
-                <!-- Preenchido via JS -->
-            </div>
+            <div class="info-aluno-header" id="info-aluno-header"></div>
 
             <h4 style="margin-bottom: 0.8rem;">Respostas Registradas:</h4>
             <ul id="lista-respostas"></ul>
 
             <div class="secao-recomendacoes">
                 <h4>💡 Orientações Pedagógicas para o Professor / AEE:</h4>
-                <ul id="lista-recomendacoes">
-                    <!-- Geradas dinamicamente via JS -->
-                </ul>
+                <ul id="lista-recomendacoes"></ul>
             </div>
             
             <p class="disclaimer-tecnico">
-                <strong>Isenção Técnica:</strong> Este documento trata-se de um relatório pedagógico de preferências de acessibilidade e autoavaliação de leitura, não constituindo laudo médico, diagnóstico clínico ou parecer de saúde visual.
+                <strong>Isenção Técnica:</strong> Este documento trata-se de um relatório pedagógico de preferências de acessibilidade e autoavaliação de leitura, não constituindo laudo médico ou diagnóstico clínico.
             </p>
             
             <br>
             <button class="btn-resposta btn-sim btn-exportar" style="width: 100%;" onclick="window.print()">Exportar Relatório Pedagógico (PDF)</button>
         </div>
 
-        <!-- SEÇÃO EXPLICATIVA SOBRE RECURSOS -->
+        <!-- SEÇÃO EXPLICATIVA SOBRE RECURSOS DA PÁGINA -->
         <section class="card-container secao-explicativa">
-            <h2>Entenda como estas ferramentas ajudam a sua leitura</h2>
+            <h2>Como estas ferramentas ajudam a sua leitura</h2>
             <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.95rem; color: var(--texto-secundario);">
-                <p><strong>📖 Fonte Adaptada (OpenDyslexic):</strong> As letras possuem uma base mais pesada, o que ajuda a evitar que o cérebro inverta os caracteres durante a leitura.</p>
-                <p><strong>🌙 Modo Escuro / Alto Contraste:</strong> Diminui a luz intensa emitida pela tela, reduzindo dores de cabeça e a vista cansada.</p>
-                <p><strong>📏 Régua de Leitura:</strong> Ajuda a manter o foco em uma linha de cada vez, evitando perder-se em textos longos.</p>
-                <p><strong>🎧 Leitor de Voz e Trilha Sonora:</strong> Oferece suporte em áudio para quem aprende melhor ouvindo e ajuda no relaxamento durante os estudos.</p>
+                <p><strong>📖 Fonte Adaptada (OpenDyslexic):</strong> Aumenta a diferenciação visual entre as letras para evitar confusão de leitura.</p>
+                <p><strong>🌙 Modo Escuro:</strong> Reduz o brilho excessivo da tela e o cansaço visual.</p>
+                <p><strong>📏 Régua de Leitura:</strong> Ajuda a acompanhar o texto linha por linha.</p>
+                <p><strong>🎵 Som Ambiente:</strong> Proporciona tom de fundo relaxante para auxiliar no foco.</p>
             </div>
+        </section>
+
+        <!-- PLAYER SECUNDÁRIO EMBUTIDO NO FINAL -->
+        <section class="card-container secao-audio-externo" style="align-items: center; text-align: center;">
+            <p style="font-size: 0.85rem; color: var(--texto-secundario);">Trilha de áudio externa opcional:</p>
+            <iframe src="https://audio.com/embed/v2/audio/1871334286400667?theme=dark&layout=fixed&cover=true&footer=true&author=true&watermark=true" style="display:block; border-radius: 8px; border: none; height: 180px; width: 100%; max-width: 400px;" loading="lazy" data-audiocom-embed></iframe>
         </section>
     </main>
 
@@ -512,7 +476,7 @@
             },
             {
                 id: 'luz',
-                texto: "A luz branca e brilhante da tela ou do papel atrabalha sua concentração ao ler?",
+                texto: "A luz branca e brilhante da tela ou do papel atrapalha sua concentração ao ler?",
                 recSim: "Utilizar alto contraste, fundo escuro/sépias nas telas ou fornecer impressos em papel sem brilho (offset).",
                 recNao: "Adaptação normal a ambientes com iluminação brilhante."
             },
@@ -540,9 +504,13 @@
         const barraProgresso = document.getElementById('barra-progresso');
         const btnTema = document.getElementById('btn-tema');
         const btnVelocidade = document.getElementById('btn-velocidade');
+        const btnMusica = document.getElementById('btn-musica');
         const regua = document.getElementById('regua-leitura');
 
         let audioCtx;
+        let musicaOscilador = null;
+        let musicaGanho = null;
+        let musicaAtiva = false;
 
         function inicializarAudio() {
             if (!audioCtx) {
@@ -550,6 +518,31 @@
             }
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
+            }
+        }
+
+        function alternarMusicaFundo() {
+            inicializarAudio();
+            if (musicaAtiva) {
+                if (musicaOscilador) musicaOscilador.stop();
+                musicaAtiva = false;
+                btnMusica.textContent = '🎵 Som Ambiente';
+                btnMusica.style.backgroundColor = 'transparent';
+            } else {
+                musicaOscilador = audioCtx.createOscillator();
+                musicaGanho = audioCtx.createGain();
+                
+                musicaOscilador.type = 'sine';
+                musicaOscilador.frequency.setValueAtTime(220, audioCtx.currentTime); // Tom suave (Nota Lá)
+                musicaGanho.gain.setValueAtTime(0.015, audioCtx.currentTime); // Volume bem baixo
+
+                musicaOscilador.connect(musicaGanho);
+                musicaGanho.connect(audioCtx.destination);
+                
+                musicaOscilador.start();
+                musicaAtiva = true;
+                btnMusica.textContent = '🔊 Parar Som';
+                btnMusica.style.backgroundColor = 'rgba(5, 150, 105, 0.2)';
             }
         }
 
@@ -627,12 +620,12 @@
             const temaAtual = document.documentElement.getAttribute('data-tema');
             if (temaAtual === 'escuro') {
                 document.documentElement.removeAttribute('data-tema');
-                btnTema.textContent = '🌙 Modo Escuro';
+                btnTema.textContent = '🌙 Escuro';
                 localStorage.setItem('temaEscuro', 'false');
                 falarTexto("Modo claro ativado");
             } else {
                 document.documentElement.setAttribute('data-tema', 'escuro');
-                btnTema.textContent = '☀️ Modo Claro';
+                btnTema.textContent = '☀️ Claro';
                 localStorage.setItem('temaEscuro', 'true');
                 falarTexto("Modo escuro ativado");
             }
@@ -734,7 +727,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('temaEscuro') === 'true') {
                 document.documentElement.setAttribute('data-tema', 'escuro');
-                btnTema.textContent = '☀️ Modo Claro';
+                btnTema.textContent = '☀️ Claro';
             }
             if (localStorage.getItem('fonteDislexia') === 'true') {
                 document.body.classList.add('fonte-dislexia');
