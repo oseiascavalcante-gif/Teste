@@ -68,7 +68,6 @@
             outline-offset: 3px !important;
         }
 
-        /* BARRA SUPERIOR FIXA COM SOM */
         .toolbar-acessibilidade {
             background-color: var(--bg-card);
             border-bottom: 1px solid var(--cor-borda);
@@ -113,11 +112,10 @@
             border-color: var(--cor-primaria);
         }
 
-        /* CONTEÚDO PRINCIPAL */
         main {
             max-width: 720px;
             width: 100%;
-            margin: 2rem auto;
+            margin: 1.5rem auto;
             padding: 0 1.5rem;
             flex: 1;
             display: flex;
@@ -155,16 +153,23 @@
             background-color: var(--bg-card);
             border: 1px solid var(--cor-borda);
             border-radius: 16px;
-            padding: 2rem;
+            padding: 1.75rem;
             box-shadow: var(--sombra-card);
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1.25rem;
         }
 
         .card-container h2 {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             color: var(--texto-principal);
+        }
+
+        .secao-player-topo {
+            align-items: center;
+            text-align: center;
+            background-color: var(--bg-card);
+            padding: 1.25rem;
         }
 
         .form-grupo {
@@ -331,8 +336,8 @@
             .instrucoes,
             .regua-leitura,
             .secao-explicativa,
-            .btn-exportar,
-            .secao-audio-externo {
+            .secao-player-topo,
+            .btn-exportar {
                 display: none !important;
             }
 
@@ -361,10 +366,9 @@
 
     <header class="toolbar-acessibilidade" role="banner">
         <div class="brand-title">
-            Portal de Acessibilidade
+            Portal de Acessibilidade Escolar
         </div>
         <div class="grupo-controles" role="region" aria-label="Ferramentas de Acessibilidade">
-            <button class="btn-controle" id="btn-musica" onclick="alternarMusicaFundo()">🎵 Som Ambiente</button>
             <button class="btn-controle" onclick="alterarZoom(-10)" aria-label="Diminuir texto">A-</button>
             <button class="btn-controle" onclick="redefinirZoom()" aria-label="Tamanho original">100%</button>
             <button class="btn-controle" onclick="alterarZoom(10)" aria-label="Aumentar texto">A+</button>
@@ -376,11 +380,18 @@
     </header>
 
     <main role="main">
+        <section class="card-container secao-player-topo">
+            <p style="font-size: 0.9rem; font-weight: 600; color: var(--texto-principal);">🎵 Trilha Sonora de Acompanhamento</p>
+            <div style="width: 250px; margin: 0 auto;">
+                <iframe src="https://audio.com/embed/v2/audio/1871334286400667?theme=dark&layout=square&cover=true&footer=true&author=true&watermark=true" style="display:block; border-radius: 8px; border: none; height: 250px; width: 250px;" loading="lazy" data-audiocom-embed></iframe>
+                <a href='https://audio.com/hazel-1855329352159538' target="_blank" style="text-align: center; display: block; color: var(--texto-secundario); font-size: 12px; font-family: sans-serif; line-height: 16px; margin-top: 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-decoration: none;">@hazel-1855329352159538</a>
+            </div>
+        </section>
+
         <div class="progress-container" aria-hidden="true">
             <div class="progress-bar" id="barra-progresso"></div>
         </div>
 
-        <!-- TELA 1: IDENTIFICAÇÃO DO ALUNO -->
         <section id="area-identificacao" class="card-container">
             <h2>Identificação do Aluno</h2>
             <p style="color: var(--texto-secundario); font-size: 0.95rem;">Preencha os dados abaixo para personalizar o relatório pedagógico antes de iniciar o questionário.</p>
@@ -398,7 +409,6 @@
             <button class="btn-resposta btn-sim" onclick="iniciarQuestionario()" style="margin-top: 0.5rem;">Iniciar Triagem de Leitura</button>
         </section>
 
-        <!-- TELA 2: QUESTIONÁRIO -->
         <section id="area-questionario" style="display: none;">
             <section class="instrucoes" aria-label="Atalhos de teclado" style="margin-bottom: 1.5rem;">
                 <p><strong>Atalhos de Teclado:</strong> Pressione <kbd>N</kbd> ou <kbd>←</kbd> para <strong>NÃO</strong> | Pressione <kbd>S</kbd> ou <kbd>→</kbd> para <strong>SIM</strong>.</p>
@@ -414,7 +424,6 @@
             </article>
         </section>
 
-        <!-- TELA 3: RELATÓRIO FINAL COM RECOMENDAÇÕES PEDAGÓGICAS -->
         <div class="card-container respostas-log" id="log-container" style="display: none;" tabindex="-1">
             <h3>Relatório de Preferências de Acessibilidade Escolar</h3>
             
@@ -436,21 +445,14 @@
             <button class="btn-resposta btn-sim btn-exportar" style="width: 100%;" onclick="window.print()">Exportar Relatório Pedagógico (PDF)</button>
         </div>
 
-        <!-- SEÇÃO EXPLICATIVA SOBRE RECURSOS DA PÁGINA -->
         <section class="card-container secao-explicativa">
             <h2>Como estas ferramentas ajudam a sua leitura</h2>
             <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.95rem; color: var(--texto-secundario);">
                 <p><strong>📖 Fonte Adaptada (OpenDyslexic):</strong> Aumenta a diferenciação visual entre as letras para evitar confusão de leitura.</p>
                 <p><strong>🌙 Modo Escuro:</strong> Reduz o brilho excessivo da tela e o cansaço visual.</p>
                 <p><strong>📏 Régua de Leitura:</strong> Ajuda a acompanhar o texto linha por linha.</p>
-                <p><strong>🎵 Som Ambiente:</strong> Proporciona tom de fundo relaxante para auxiliar no foco.</p>
+                <p><strong>🎧 Leitor de Voz e Trilha Sonora:</strong> Oferece suporte auditivo para reforçar a concentração durante o uso do portal.</p>
             </div>
-        </section>
-
-        <!-- PLAYER SECUNDÁRIO EMBUTIDO NO FINAL -->
-        <section class="card-container secao-audio-externo" style="align-items: center; text-align: center;">
-            <p style="font-size: 0.85rem; color: var(--texto-secundario);">Trilha de áudio externa opcional:</p>
-            <iframe src="https://audio.com/embed/v2/audio/1871334286400667?theme=dark&layout=fixed&cover=true&footer=true&author=true&watermark=true" style="display:block; border-radius: 8px; border: none; height: 180px; width: 100%; max-width: 400px;" loading="lazy" data-audiocom-embed></iframe>
         </section>
     </main>
 
@@ -504,13 +506,9 @@
         const barraProgresso = document.getElementById('barra-progresso');
         const btnTema = document.getElementById('btn-tema');
         const btnVelocidade = document.getElementById('btn-velocidade');
-        const btnMusica = document.getElementById('btn-musica');
         const regua = document.getElementById('regua-leitura');
 
         let audioCtx;
-        let musicaOscilador = null;
-        let musicaGanho = null;
-        let musicaAtiva = false;
 
         function inicializarAudio() {
             if (!audioCtx) {
@@ -518,31 +516,6 @@
             }
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
-            }
-        }
-
-        function alternarMusicaFundo() {
-            inicializarAudio();
-            if (musicaAtiva) {
-                if (musicaOscilador) musicaOscilador.stop();
-                musicaAtiva = false;
-                btnMusica.textContent = '🎵 Som Ambiente';
-                btnMusica.style.backgroundColor = 'transparent';
-            } else {
-                musicaOscilador = audioCtx.createOscillator();
-                musicaGanho = audioCtx.createGain();
-                
-                musicaOscilador.type = 'sine';
-                musicaOscilador.frequency.setValueAtTime(220, audioCtx.currentTime); // Tom suave (Nota Lá)
-                musicaGanho.gain.setValueAtTime(0.015, audioCtx.currentTime); // Volume bem baixo
-
-                musicaOscilador.connect(musicaGanho);
-                musicaGanho.connect(audioCtx.destination);
-                
-                musicaOscilador.start();
-                musicaAtiva = true;
-                btnMusica.textContent = '🔊 Parar Som';
-                btnMusica.style.backgroundColor = 'rgba(5, 150, 105, 0.2)';
             }
         }
 
