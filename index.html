@@ -165,13 +165,6 @@
             color: var(--texto-principal);
         }
 
-        .secao-player-topo {
-            align-items: center;
-            text-align: center;
-            background-color: var(--bg-card);
-            padding: 1.25rem;
-        }
-
         .form-grupo {
             display: flex;
             flex-direction: column;
@@ -372,7 +365,6 @@
             .instrucoes,
             .regua-leitura,
             .secao-explicativa,
-            .secao-player-topo,
             .btn-exportar,
             .btn-reiniciar {
                 display: none !important;
@@ -417,17 +409,6 @@
     </header>
 
     <main role="main">
-        <!-- PLAYER DE MÚSICA -->
-        <section class="card-container secao-player-topo">
-            <p style="font-size: 0.9rem; font-weight: 600; color: var(--texto-principal);">🎵 Trilha Sonora de Acompanhamento</p>
-            <div style="width: 100%; max-width: 300px; margin: 0 auto;">
-                <iframe width="100%" height="160" scrolling="no" frameborder="no" allow="autoplay; encrypted-media" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1363064920&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=false" title="Player de áudio de acompanhamento em fundo musical"></iframe>
-                <div style="font-size: 10px; color: #cccccc; line-break: anywhere; word-break: normal; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif; font-weight: 100; margin-top: 6px;">
-                    <a href="https://soundcloud.com/ilikemurder" title="natalie" target="_blank" style="color: var(--texto-secundario); text-decoration: none;">natalie</a> · <a href="https://soundcloud.com/ilikemurder/numbers-temporex-slowed" title="Numbers-TEMPOREX (Slowed)" target="_blank" style="color: var(--texto-secundario); text-decoration: none;">Numbers-TEMPOREX (Slowed)</a>
-                </div>
-            </div>
-        </section>
-
         <div class="progress-container" aria-hidden="true">
             <div class="progress-bar" id="barra-progresso"></div>
         </div>
@@ -500,7 +481,7 @@
                 <p><strong>📖 Fonte Adaptada (OpenDyslexic):</strong> Aumenta a diferenciação visual entre as letras para evitar confusão de leitura.</p>
                 <p><strong>🌙 Modo Escuro:</strong> Reduz o brilho excessivo da tela e o cansaço visual.</p>
                 <p><strong>📏 Régua de Leitura:</strong> Ajuda a acompanhar o texto linha por linha.</p>
-                <p><strong>🎧 Leitor de Voz e Trilha Sonora:</strong> Oferece suporte auditivo para reforçar a concentração durante o uso do portal.</p>
+                <p><strong>🎧 Leitor de Voz Sintetizada:</strong> Oferece suporte auditivo com narração direta dos enunciados.</p>
             </div>
         </section>
     </main>
