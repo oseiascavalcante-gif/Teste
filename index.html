@@ -363,6 +363,7 @@
             pointer-events: none;
             z-index: 9999;
             left: 0;
+            transition: top 0.1s ease-out;
         }
 
         @media print {
@@ -420,7 +421,7 @@
         <section class="card-container secao-player-topo">
             <p style="font-size: 0.9rem; font-weight: 600; color: var(--texto-principal);">🎵 Trilha Sonora de Acompanhamento</p>
             <div style="width: 100%; max-width: 300px; margin: 0 auto;">
-                <iframe width="100%" height="160" scrolling="no" frameborder="no" allow="autoplay; encrypted-media" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1363064920&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=false"></iframe>
+                <iframe width="100%" height="160" scrolling="no" frameborder="no" allow="autoplay; encrypted-media" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A1363064920&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=false" title="Player de áudio de acompanhamento em fundo musical"></iframe>
                 <div style="font-size: 10px; color: #cccccc; line-break: anywhere; word-break: normal; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif; font-weight: 100; margin-top: 6px;">
                     <a href="https://soundcloud.com/ilikemurder" title="natalie" target="_blank" style="color: var(--texto-secundario); text-decoration: none;">natalie</a> · <a href="https://soundcloud.com/ilikemurder/numbers-temporex-slowed" title="Numbers-TEMPOREX (Slowed)" target="_blank" style="color: var(--texto-secundario); text-decoration: none;">Numbers-TEMPOREX (Slowed)</a>
                 </div>
@@ -597,9 +598,18 @@
             }
         }
 
+        // Rastreamento da régua pelo Mouse
         document.addEventListener('mousemove', (e) => {
             if (regua.style.display === 'block') {
                 regua.style.top = `${e.clientY - 20}px`;
+            }
+        });
+
+        // Rastreamento da régua pelo Teclado (Acompanha o foco)
+        document.addEventListener('focusin', (e) => {
+            if (regua.style.display === 'block' && e.target) {
+                const rect = e.target.getBoundingClientRect();
+                regua.style.top = `${rect.top + (rect.height / 2) - 20}px`;
             }
         });
 
