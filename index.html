@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal de Preferências de Acessibilidade Escolar</title>
     
+    <!-- Biblioteca para geração de PDF limpo -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
         @import url('https://cdnjs.cloudflare.com/ajax/libs/opendyslexic/0.7.3/opendyslexic.min.css');
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -195,7 +198,7 @@
 
         .pergunta-card {
             text-align: center;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
         .pergunta-card h2 {
@@ -336,6 +339,17 @@
             border-radius: 4px;
         }
 
+        .item-historico {
+            background-color: var(--bg-principal);
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
         footer {
             border-top: 1px solid var(--cor-borda);
             padding: 1.5rem;
@@ -366,7 +380,8 @@
             .regua-leitura,
             .secao-explicativa,
             .btn-exportar,
-            .btn-reiniciar {
+            .btn-reiniciar,
+            .secao-historico {
                 display: none !important;
             }
 
@@ -413,7 +428,7 @@
             <div class="progress-bar" id="barra-progresso"></div>
         </div>
 
-        <!-- TELA 1: IDENTIFICAÇÃO DO ALUNO -->
+        <!-- TELA 1: IDENTIFICAÇÃO DO ALUNO E HISTÓRICO -->
         <section id="area-identificacao" class="card-container">
             <h2>Identificação do Aluno</h2>
             <p style="color: var(--texto-secundario); font-size: 0.95rem;">Preencha os dados abaixo para personalizar o relatório pedagógico antes de iniciar o questionário.</p>
@@ -431,6 +446,14 @@
             </div>
 
             <button class="btn-resposta btn-sim" onclick="iniciarQuestionario()" style="margin-top: 0.5rem;">Iniciar Triagem de Leitura</button>
+
+            <!-- HISTÓRICO LOCAL -->
+            <div class="secao-historico" style="margin-top: 1rem; border-top: 1px solid var(--cor-borda); padding-top: 1rem;">
+                <h3 style="font-size: 1.05rem; margin-bottom: 0.8rem; color: var(--texto-principal);">📋 Avaliações Salvas Recentes:</h3>
+                <div id="lista-historico" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <p style="font-size: 0.85rem; color: var(--texto-secundario);">Nenhuma avaliação salva até o momento.</p>
+                </div>
+            </div>
         </section>
 
         <!-- TELA 2: QUESTIONÁRIO -->
@@ -442,6 +465,10 @@
             <article class="card-container pergunta-card">
                 <h2 id="texto-pergunta" aria-live="assertive">Carregando pergunta...</h2>
 
+                <button class="btn-secundario" onclick="repetirPergunta()" style="width: 100%; max-width: 280px; margin: 0 auto; font-size: 0.9rem;">
+                    🔊 Ouvir Pergunta Novamente
+                </button>
+
                 <div class="botoes-container">
                     <button class="btn-resposta btn-nao" id="btn-nao" onclick="registrarResposta('NÃO')">NÃO (N)</button>
                     <button class="btn-resposta btn-sim" id="btn-sim" onclick="registrarResposta('SIM')">SIM (S)</button>
@@ -451,25 +478,27 @@
 
         <!-- TELA 3: RELATÓRIO FINAL -->
         <div class="card-container respostas-log" id="log-container" style="display: none;" tabindex="-1">
-            <h3>Relatório de Preferências de Acessibilidade Escolar</h3>
-            
-            <div class="info-aluno-header" id="info-aluno-header"></div>
-            <div class="card-resumo-indicador" id="resumo-indicador"></div>
+            <div id="relatorio-conteudo">
+                <h3>Relatório de Preferências de Acessibilidade Escolar</h3>
+                
+                <div class="info-aluno-header" id="info-aluno-header"></div>
+                <div class="card-resumo-indicador" id="resumo-indicador"></div>
 
-            <h4 style="margin-bottom: 0.8rem;">Respostas Registradas:</h4>
-            <ul id="lista-respostas"></ul>
+                <h4 style="margin-bottom: 0.8rem;">Respostas Registradas:</h4>
+                <ul id="lista-respostas"></ul>
 
-            <div class="secao-recomendacoes">
-                <h4>💡 Orientações Pedagógicas para o Professor / AEE:</h4>
-                <ul id="lista-recomendacoes"></ul>
+                <div class="secao-recomendacoes">
+                    <h4>💡 Orientações Pedagógicas para o Professor / AEE:</h4>
+                    <ul id="lista-recomendacoes"></ul>
+                </div>
+                
+                <p class="disclaimer-tecnico">
+                    <strong>Isenção Técnica:</strong> Este documento trata-se de um relatório pedagógico de preferências de acessibilidade e autoavaliação de leitura, não constituindo laudo médico ou diagnóstico clínico.
+                </p>
             </div>
             
-            <p class="disclaimer-tecnico">
-                <strong>Isenção Técnica:</strong> Este documento trata-se de um relatório pedagógico de preferências de acessibilidade e autoavaliação de leitura, não constituindo laudo médico ou diagnóstico clínico.
-            </p>
-            
             <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem;">
-                <button class="btn-resposta btn-sim btn-exportar" style="width: 100%;" onclick="window.print()">Exportar Relatório Pedagógico (PDF)</button>
+                <button class="btn-resposta btn-sim btn-exportar" style="width: 100%;" onclick="exportarPDF()">📄 Baixar Relatório em PDF</button>
                 <button class="btn-secundario btn-reiniciar" style="width: 100%;" onclick="reiniciarAvaliacao()">🔄 Iniciar Nova Avaliação</button>
             </div>
         </div>
@@ -491,6 +520,7 @@
     </footer>
 
     <script>
+        // EXPANSÃO DAS PERGUNTAS DE TRIAGEM (6 ITENS)
         const perguntas = [
             {
                 id: 'cansaco',
@@ -515,6 +545,18 @@
                 texto: "Você entende e memoriza melhor a matéria quando ouve a explicação em áudio em vez de apenas ler o texto?",
                 recSim: "Aluno se beneficia fortemente de recursos multimídia, leitor de voz sintetizada ou áudios complementares.",
                 recNao: "Preferência ou boa assimilação por meio da leitura textual direta."
+            },
+            {
+                id: 'tamanho_fonte',
+                texto: "Você precisa aproximar muito o rosto do papel ou da tela para conseguir enxergar os detalhes das letras?",
+                recSim: "Disponibilizar materiais pedagógicos impressos em fonte ampliada (tamanho mínimo 16pt a 18pt).",
+                recNao: "Distância e acuidade visual funcionais para fontes padrão de sala de aula."
+            },
+            {
+                id: 'luz_ambiente',
+                texto: "Luzes fortes da sala de aula ou reflexos na lousa/tela incomodam seus olhos durante a aula?",
+                recSim: "Posicionar a carteira do aluno longe de janelas diretas ou ajustar o ângulo de reflexo da lousa digital.",
+                recNao: "Tolerância adequada à iluminação padrão de sala de aula."
             }
         ];
 
@@ -537,6 +579,7 @@
         const regua = document.getElementById('regua-leitura');
         const erroNome = document.getElementById('erro-nome');
         const erroTurma = document.getElementById('erro-turma');
+        const listaHistorico = document.getElementById('lista-historico');
 
         let audioCtx;
 
@@ -579,14 +622,12 @@
             }
         }
 
-        // Rastreamento da régua pelo Mouse
         document.addEventListener('mousemove', (e) => {
             if (regua.style.display === 'block') {
                 regua.style.top = `${e.clientY - 20}px`;
             }
         });
 
-        // Rastreamento da régua pelo Teclado (Acompanha o foco)
         document.addEventListener('focusin', (e) => {
             if (regua.style.display === 'block' && e.target) {
                 const rect = e.target.getBoundingClientRect();
@@ -650,6 +691,12 @@
                 mensagem.lang = 'pt-BR';
                 mensagem.rate = velocidadeVoz;
                 window.speechSynthesis.speak(mensagem);
+            }
+        }
+
+        function repetirPergunta() {
+            if (indiceAtual < perguntas.length) {
+                falarTexto(perguntas[indiceAtual].texto);
             }
         }
 
@@ -726,6 +773,35 @@
             if (tecla === 'n' || e.key === 'ArrowLeft') registrarResposta('NÃO');
         });
 
+        function salvarNoHistorico(registro) {
+            let historico = JSON.parse(localStorage.getItem('historicoAvaliações') || '[]');
+            historico.unshift(registro);
+            if (historico.length > 5) historico.pop(); // Mantém os 5 mais recentes
+            localStorage.setItem('historicoAvaliações', JSON.stringify(historico));
+            carregarHistorico();
+        }
+
+        function carregarHistorico() {
+            let historico = JSON.parse(localStorage.getItem('historicoAvaliações') || '[]');
+            if (historico.length === 0) {
+                listaHistorico.innerHTML = '<p style="font-size: 0.85rem; color: var(--texto-secundario);">Nenhuma avaliação salva até o momento.</p>';
+                return;
+            }
+
+            listaHistorico.innerHTML = '';
+            historico.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item-historico';
+                div.innerHTML = `
+                    <div>
+                        <strong>${item.nome}</strong> (${item.turma})<br>
+                        <span style="font-size: 0.78rem; color: var(--texto-secundario);">${item.data} - ${item.necessidades} adaptações</span>
+                    </div>
+                `;
+                listaHistorico.appendChild(div);
+            });
+        }
+
         function exibirResultados() {
             encerrado = true;
             tocarSomSintetizado('concluido');
@@ -765,6 +841,26 @@
                 liRec.textContent = "Nenhuma adaptação específica identificada. Manter configurações de ensino padrão.";
                 listaRecomendacoes.appendChild(liRec);
             }
+
+            salvarNoHistorico({
+                nome: dadosAluno.nome,
+                turma: dadosAluno.turma,
+                data: dadosAluno.data,
+                necessidades: totalSim
+            });
+        }
+
+        function exportarPDF() {
+            const elemento = document.getElementById('relatorio-conteudo');
+            const opcoes = {
+                margin:       10,
+                filename:     `Relatorio_Acessibilidade_${dadosAluno.nome.replace(/\s+/g, '_')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opcoes).from(elemento).save();
         }
 
         function reiniciarAvaliacao() {
@@ -791,6 +887,7 @@
             if (localStorage.getItem('fonteDislexia') === 'true') {
                 document.body.classList.add('fonte-dislexia');
             }
+            carregarHistorico();
         });
     </script>
 </body>
